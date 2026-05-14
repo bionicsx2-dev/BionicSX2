@@ -29,7 +29,9 @@ namespace MIPSAnalyst
 		char name[64];
 	};
 
+#ifndef PCSX2_TARGET_IOS
 	void ScanForFunctions(ccc::SymbolDatabase& database, MemoryInterface& reader, u32 startAddr, u32 endAddr, bool generateHashes);
+#endif
 
 	enum LoadStoreLRType { LOADSTORE_NORMAL, LOADSTORE_LEFT, LOADSTORE_RIGHT };
 

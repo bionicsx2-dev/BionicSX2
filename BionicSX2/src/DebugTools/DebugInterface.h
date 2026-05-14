@@ -9,7 +9,12 @@
 
 #ifdef PCSX2_TARGET_IOS
 // Stub: debug interface not available on iOS
-class DebugInterface : public MemoryInterface {};
+class DebugInterface : public MemoryInterface
+{
+public:
+	static void setPauseOnEntry(bool) {}
+	static bool getPauseOnEntry() { return false; }
+};
 class R5900DebugInterface : public DebugInterface {};
 class R3000DebugInterface : public DebugInterface {};
 class ElfMemoryReader : public MemoryInterface {};

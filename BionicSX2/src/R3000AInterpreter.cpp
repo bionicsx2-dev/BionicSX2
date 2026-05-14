@@ -243,7 +243,9 @@ static void doBranch(s32 tar) {
 	if(tar == 0x890)
 	{
 		DevCon.WriteLn(Color_Gray, "R3000 Debugger: Branch to 0x890 (SYSMEM). Clearing modules.");
+#ifndef PCSX2_TARGET_IOS
 		R3000SymbolGuardian.ClearIrxModules();
+#endif
 	}
 
 	// Override the memory size argument to IOPBOOT
