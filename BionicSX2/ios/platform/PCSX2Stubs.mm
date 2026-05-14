@@ -183,4 +183,25 @@ std::optional<std::string> InputManager::ConvertHostKeyboardCodeToString(u32 cod
 const char* InputManager::ConvertHostKeyboardCodeToIcon(u32 code) { return ""; }
 
 // DebugInterface stubs — parseExpression now inline in Breakpoints.h iOS path
+
+// DEV9 stubs (Category 8 — hardware not available on iOS)
+u8 DEV9read8(u32 addr) { return 0; }
+u16 DEV9read16(u32 addr) { return 0; }
+u32 DEV9read32(u32 addr) { return 0; }
+void DEV9write8(u32 addr, u8 value) {}
+void DEV9write16(u32 addr, u16 value) {}
+void DEV9write32(u32 addr, u32 value) {}
+void DEV9readDMA8Mem(u32* pMem, int size) {}
+void DEV9writeDMA8Mem(u32* pMem, int size) {}
+void DEV9irqHandler() {}
+void DEV9shutdown() {}
+
+// CPU info stubs (common/HostSys.h — simplified for iOS)
+u64 GetCPUTicks() { return 0; }
+u64 GetTickFrequency() { return 1000000000; }
+const CPUInfo& GetCPUInfo() { static CPUInfo info = {}; return info; }
+
 u32 standardizeBreakpointAddress(u32 addr) { return addr; }
+
+// GetValidDrive stub — optical drive not available on iOS
+void GetValidDrive(std::string& drive) { drive.clear(); }

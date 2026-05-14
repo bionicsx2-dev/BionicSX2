@@ -51,6 +51,24 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES ${USB_PAD_SDLFF_SOURCES})
 # DEV9 is fully stubbed on iOS via PCSX2Stubs.mm — exclude all source files
 file(GLOB_RECURSE DEV9_SOURCES DEV9/*.cpp)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${DEV9_SOURCES})
+# GS Dump/Capture/PNG — not needed on iOS, pull in lzma/zstd/crc/imgui
+list(REMOVE_ITEM PCSX2_CORE_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/GS/GSDump.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GS/GSLzma.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GS/GSPng.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GSDumpReplayer.cpp
+)
+# Achievements/FullscreenUI/ImGui — depends on imgui, not needed initially
+list(REMOVE_ITEM PCSX2_CORE_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Achievements.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ImGui/FullscreenUI.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ImGui/FullscreenUI_Settings.cpp
+)
+# CDVDdiscReader — GetValidDrive is Darwin optical-drive specific, not on iOS
+list(REMOVE_ITEM PCSX2_CORE_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/CDVD/CDVDdiscReader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CDVD/CDVDdiscThread.cpp
+)
 
 add_library(pcsx2-core STATIC ${PCSX2_CORE_SOURCES})
 
@@ -190,6 +208,7 @@ file(GLOB_RECURSE COMMON_SOURCES ${PCSX2_ROOT}/common/*.cpp ${PCSX2_ROOT}/common
 # Exclude platform-specific files not for iOS
 list(REMOVE_ITEM COMMON_SOURCES
     ${PCSX2_ROOT}/common/Darwin/DarwinMisc.cpp
+    ${PCSX2_ROOT}/common/HostSys.cpp
     ${PCSX2_ROOT}/common/HTTPDownloaderWinHTTP.cpp
     ${PCSX2_ROOT}/common/HTTPDownloaderCurl.cpp
     ${PCSX2_ROOT}/common/Image.cpp
@@ -216,3 +235,10 @@ target_include_directories(pcsx2-core PUBLIC ${PCSX2_ROOT}/common)
 target_compile_options(pcsx2-core PRIVATE -fobjc-arc)
 target_link_options(pcsx2-core PRIVATE -fobjc-link-runtime)
 target_link_libraries(pcsx2-core PUBLIC "-framework Foundation")
+# Find brew-installed lz4
+execute_process(COMMAND brew --prefix lz4
+  OUTPUT_VARIABLE LZ4_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+if(LZ4_PREFIX)
+  target_include_directories(pcsx2-core PUBLIC "${LZ4_PREFIX}/include")
+  target_link_libraries(pcsx2-core PUBLIC "${LZ4_PREFIX}/lib/liblz4.a")
+endif()
