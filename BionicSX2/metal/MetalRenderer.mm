@@ -106,9 +106,8 @@ bool GSDeviceMTL::DoFullscreenSwap(Error* error)
     return true;
 }
 
-bool GSDeviceMTL::DoStretchRect(const GSVector4i& src_rect, const GSVector4i& dst_rect, GSTexture* src, GSTexture* dest, bool linear)
+void GSDeviceMTL::DoStretchRect(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, GSHWDrawConfig::ColorMaskSelector cms, ShaderConvert shader, bool linear)
 {
-    return true;
 }
 
 void GSDeviceMTL::ClearRenderTarget(GSTexture* t, const GSVector4& c) {}

@@ -92,8 +92,6 @@ struct PipelineSelectorMTL
     }
 };
 
-} // namespace std
-
 namespace std
 {
 template <>
@@ -131,7 +129,7 @@ public:
     std::string GetDeviceName() const override;
     std::string GetDriverInfo() const override;
     bool DoFullscreenSwap(Error* error) override;
-    bool DoStretchRect(const GSVector4i& src_rect, const GSVector4i& dst_rect, GSTexture* src, GSTexture* dest, bool linear) override;
+    void DoStretchRect(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, GSHWDrawConfig::ColorMaskSelector cms, ShaderConvert shader, bool linear) override;
     void ClearRenderTarget(GSTexture* t, const GSVector4& c) override;
     void ClearRenderTarget(GSTexture* t, const GSVector4& c, const GSVector4i& r) override;
     void ClearDepth(GSTexture* t) override;
