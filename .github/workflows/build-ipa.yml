@@ -44,28 +44,11 @@ jobs:
 
       - name: Package IPA
         run: |
-          # Create export options plist for unsigned dev build
-          cat > exportOptions.plist << 'EOF'
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>development</string>
-              <key>signingStyle</key>
-              <string>manual</string>
-              <key>teamID</key>
-              <string></string>
-          </dict>
-          </plist>
-          EOF
-
-          xcodebuild -exportArchive \
-            -archivePath build-ios/BionicSX2.xcarchive \
-            -exportPath build-ios/BionicSX2.ipa \
-            -exportOptionsPlist exportOptions.plist \
-            CODE_SIGN_IDENTITY="" \
-            PROVISIONING_PROFILE="" || true
+          cd build-ios
+          mkdir -p Payload
+          cp -R BionicSX2.app Payload/
+          zip -r BionicSX2.ipa Payload
+          rm -rf Payload
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v7

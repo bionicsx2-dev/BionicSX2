@@ -6,8 +6,10 @@
 #include "common/Assertions.h"
 #include "common/Console.h"
 #include "common/CrashHandler.h"
+#include "common/Darwin/DarwinMisc.h"
 #include "common/Error.h"
 #include "common/HostSys.h"
+#include "common/Threading.h"
 
 #include <csignal>
 #include <cstring>
@@ -23,16 +25,7 @@
 
 // Audit Section 5.3: Mach primitives for page fault handling are available on iOS
 // IOKit/CoreGraphics dependencies removed per Section 4.3/8.4
-
-size_t HostSys::GetRuntimePageSize()
-{
-    return sysctlbyname_T<u32>("hw.pagesize").value_or(0);
-}
-
-size_t HostSys::GetRuntimeCacheLineSize()
-{
-    return static_cast<size_t>(std::max<s64>(sysctlbyname_T<s64>("hw.cachelinesize").value_or(0), 0));
-}
+// Note: HostSys::GetRuntimePageSize/GetRuntimeCacheLineSize defined in HostSys_iOS.mm
 
 // Mach exception handler for page faults (vtlb fastmem)
 // Audit Section 6.2: Mach exception ports are available on iOS
