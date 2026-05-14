@@ -30,9 +30,9 @@ jobs:
 
       - name: Generate CMake Files
         run: |
-          cmake -DCMAKE_BUILD_TYPE=Release \
+          cmake -S BionicSX2 -B build \
                 -DCMAKE_TOOLCHAIN_FILE=cmake/ios.toolchain.cmake \
-                -B build .
+                -DCMAKE_BUILD_TYPE=Release -G Ninja
 
       - name: Build BionicSX2
         working-directory: build
