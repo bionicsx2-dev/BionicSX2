@@ -8,14 +8,21 @@
 #include "common/HostSys.h"
 #include "common/CocoaTools.h"
 #include "common/Darwin/DarwinMisc.h"
+#include "common/Threading.h"
 #include "Config.h"
+#include "Host.h"
 #include "SaveState.h"
 #include "Recording/InputRecording.h"
 #include "DebugTools/Breakpoints.h"
 #include "GSDumpReplayer.h"
 #include "GameDatabase.h"
 #include "GS/GS.h"
+#include "GS/GSCapture.h"
+#include "GS/GSDump.h"
+#include "GS/GSPng.h"
 #include "Host/AudioStream.h"
+#include "ImGui/FullscreenUI.h"
+#include "ImGui/ImGuiManager.h"
 #include "Input/InputManager.h"
 
 // ── Category 1: SW Renderer JIT / x86 stubs ──
@@ -206,3 +213,251 @@ u32 standardizeBreakpointAddress(u32 addr) { return addr; }
 
 // GetValidDrive stub — optical drive not available on iOS
 void GetValidDrive(std::string& drive) { drive.clear(); }
+
+// ── AudioStream stubs ──
+std::unique_ptr<AudioStream> AudioStream::CreateStream(AudioBackend, u32, const AudioStreamParameters&, const char*, const char*, bool, Error*) { return nullptr; }
+std::unique_ptr<AudioStream> AudioStream::CreateNullStream(u32, u32) { return nullptr; }
+void AudioStream::EmptyBuffer() {}
+void AudioStream::SetNominalRate(float) {}
+void AudioStream::SetOutputVolume(u32) {}
+void AudioStream::SetStretchEnabled(bool) {}
+bool AudioStream::WriteChunk(const float*) { return false; }
+const char* AudioStream::GetBackendName(AudioBackend) { return ""; }
+std::optional<AudioBackend> AudioStream::ParseBackendName(const char*) { return std::nullopt; }
+
+// ── AudioStreamParameters stubs ──
+void AudioStreamParameters::LoadSave(SettingsWrapper&, const char*) {}
+bool AudioStreamParameters::operator==(const AudioStreamParameters& o) const { return true; }
+bool AudioStreamParameters::operator!=(const AudioStreamParameters& o) const { return false; }
+
+// ── Achievements stubs ──
+void Achievements::ConfirmSystemReset() {}
+bool Achievements::DisableHardcoreMode() { return false; }
+void Achievements::FrameUpdate() {}
+void Achievements::GameChanged(u32, u32) {}
+void Achievements::IdleUpdate() {}
+bool Achievements::Initialize() { return false; }
+bool Achievements::IsActive() { return false; }
+bool Achievements::IsHardcoreModeActive() { return false; }
+bool Achievements::LoadState(std::span<const u8>) { return false; }
+void Achievements::OnVMPaused(bool) {}
+void Achievements::ResetClient() {}
+void Achievements::ResetHardcoreMode(bool) {}
+void Achievements::SaveState(SaveStateBase&) {}
+void Achievements::Shutdown(bool) {}
+void Achievements::UpdateSettings(const Pcsx2Config::AchievementsOptions&) {}
+
+// ── FullscreenUI stubs ──
+void FullscreenUI::CheckForConfigChanges(const Pcsx2Config&) {}
+void FullscreenUI::GameChanged(std::string, std::string, std::string, u32, u32) {}
+bool FullscreenUI::HasActiveWindow() { return false; }
+void FullscreenUI::OnVMDestroyed() {}
+void FullscreenUI::OnVMStarted() {}
+void FullscreenUI::OpenAchievementsWindow() {}
+void FullscreenUI::OpenLeaderboardsWindow() {}
+void FullscreenUI::OpenPauseMenu() {}
+void FullscreenUI::Render() {}
+void FullscreenUI::ReportStateLoadError(const std::string&, std::optional<s32>, bool) {}
+void FullscreenUI::ReportStateSaveError(const std::string&, std::optional<s32>) {}
+
+// ── GSCapture stubs ──
+bool GSCapture::BeginCapture(float, GSVector2i, float, std::string) { return false; }
+void GSCapture::DeliverAudioPacket(const float*) {}
+void GSCapture::DeliverVideoFrame(GSTexture*) {}
+void GSCapture::EndCapture() {}
+void GSCapture::Flush() {}
+double GSCapture::GetElapsedTime() { return 0; }
+void* GSCapture::GetEncoderThreadHandle() { return nullptr; }
+std::string GSCapture::GetNextCaptureFileName() { return {}; }
+u64 GSCapture::GetSize() { return 0; }
+bool GSCapture::IsCapturing() { return false; }
+bool GSCapture::IsCapturingVideo() { return false; }
+
+// ── GSDumpBase stubs ──
+bool GSDumpBase::CreateUncompressedDump(const std::string&, const std::string&, u32, u32, u32, const u32*, const freezeData&, const GSPrivRegSet*) { return false; }
+bool GSDumpBase::CreateXzDump(const std::string&, const std::string&, u32, u32, u32, const u32*, const freezeData&, const GSPrivRegSet*) { return false; }
+bool GSDumpBase::CreateZstDump(const std::string&, const std::string&, u32, u32, u32, const u32*, const freezeData&, const GSPrivRegSet*) { return false; }
+bool GSDumpBase::ReadFIFO(u32) { return false; }
+bool GSDumpBase::Transfer(int, const u8*, u64) { return false; }
+bool GSDumpBase::VSync(int, bool, const GSPrivRegSet*) { return false; }
+bool GSDumpReplayer::IsRunner() { return false; }
+
+// ── GSPng stub ──
+bool GSPng::Save(GSPng::Format, const std::string&, const u8*, int, int, int, int, bool) { return false; }
+
+// ── SW renderer JIT stubs ──
+GSDrawScanlineCodeGenerator::GSDrawScanlineCodeGenerator(uptr, void*, u64) {}
+void GSDrawScanlineCodeGenerator::Generate() {}
+GSSetupPrimCodeGenerator::GSSetupPrimCodeGenerator(uptr, void*, u64) {}
+void GSSetupPrimCodeGenerator::Generate() {}
+
+// ── FolderMemoryCard stubs ──
+FolderMemoryCard::FolderMemoryCard() = default;
+FolderMemoryCard::~FolderMemoryCard() = default;
+void FolderMemoryCard::Close(bool) {}
+bool FolderMemoryCard::IsFormatted() const { return false; }
+bool FolderMemoryCard::Open(std::string, const McdOptions&, u32, bool, std::string, bool) { return false; }
+
+// ── FolderMemoryCardAggregator stubs ──
+FolderMemoryCardAggregator::FolderMemoryCardAggregator() = default;
+void FolderMemoryCardAggregator::Close() {}
+bool FolderMemoryCardAggregator::EraseBlock(u32, u32) { return false; }
+u32 FolderMemoryCardAggregator::GetCRC(u32) { return 0; }
+bool FolderMemoryCardAggregator::GetSizeInfo(u32, McdSizeInfo&) { return false; }
+bool FolderMemoryCardAggregator::IsPSX(u32) { return false; }
+bool FolderMemoryCardAggregator::IsPresent(u32) { return false; }
+bool FolderMemoryCardAggregator::NextFrame(u32) { return false; }
+bool FolderMemoryCardAggregator::Open() { return false; }
+bool FolderMemoryCardAggregator::ReIndex(u32, bool, const std::string&) { return false; }
+bool FolderMemoryCardAggregator::Read(u32, u8*, u32, int) { return false; }
+bool FolderMemoryCardAggregator::Save(u32, const u8*, u32, int) { return false; }
+void FolderMemoryCardAggregator::SetFiltering(bool) {}
+
+// ── GameDatabaseSchema stubs ──
+void GameDatabaseSchema::GameEntry::applyGSHardwareFixes(Pcsx2Config::GSOptions&) const {}
+void GameDatabaseSchema::GameEntry::applyGameFixes(Pcsx2Config&, bool) const {}
+const GameDatabaseSchema::GameEntry* GameDatabaseSchema::GameEntry::findPatch(u32) const { return nullptr; }
+std::string GameDatabaseSchema::GameEntry::memcardFiltersAsString() const { return {}; }
+
+// ── Host callbacks stubs ──
+bool Host::AcquireRenderWindow(bool) { return false; }
+void Host::BeginPresentFrame() {}
+bool Host::CheckForSettingsChanges(const Pcsx2Config&) { return false; }
+bool Host::IsFullscreen() { return false; }
+bool Host::LoadSettings(SettingsInterface&, std::unique_lock<std::mutex>&) { return false; }
+void Host::OnGameChanged(const std::string&, const std::string&, const std::string&, const std::string&, u32, u32) {}
+void Host::OnInputDeviceConnected(std::string_view, std::string_view) {}
+void Host::OnInputDeviceDisconnected(InputBindingKey, std::string_view) {}
+void Host::OnPerformanceMetricsUpdated() {}
+void Host::OnSaveStateLoaded(std::string_view, bool) {}
+void Host::OnSaveStateLoading(std::string_view) {}
+void Host::OnSaveStateSaved(std::string_view) {}
+void Host::OnVMDestroyed() {}
+void Host::OnVMPaused() {}
+void Host::OnVMResumed() {}
+void Host::OnVMStarted() {}
+void Host::OnVMStarting() {}
+void Host::PumpMessagesOnCPUThread() {}
+void Host::ReleaseRenderWindow() {}
+void Host::SetFullscreen(bool) {}
+void Host::SetMouseLock(bool) {}
+void Host::SetMouseMode(bool, bool) {}
+
+// ── HostSys stubs ──
+void HostSys::BeginCodeWrite() {}
+void HostSys::EndCodeWrite() {}
+
+// ── ImGui stubs ──
+bool ImGui::Begin(const char*, bool*, int) { return false; }
+bool ImGui::BeginChild(const char*, ImVec2, int, int) { return false; }
+bool ImGui::BeginTable(const char*, int, int, ImVec2, float) { return false; }
+void ImGui::End() {}
+void ImGui::EndChild() {}
+void ImGui::EndTable() {}
+ImDrawList* ImGui::GetBackgroundDrawList() { return nullptr; }
+ImGuiContext* ImGui::GetCurrentContext() { return nullptr; }
+ImVec2 ImGui::GetCursorScreenPos() { return ImVec2(0,0); }
+float ImGui::GetFontSize() { return 0; }
+ImGuiIO& ImGui::GetIO() { static ImGuiIO io; return io; }
+ImGuiPlatformIO& ImGui::GetPlatformIO() { static ImGuiPlatformIO pio; return pio; }
+float ImGui::GetScrollY() { return 0; }
+ImGuiStyle& ImGui::GetStyle() { static ImGuiStyle s; return s; }
+ImDrawList* ImGui::GetWindowDrawList() { return nullptr; }
+ImVec2 ImGui::GetWindowPos() { return ImVec2(0,0); }
+void ImGui::Image(ImTextureID, ImVec2, ImVec2, ImVec2, ImVec2, ImVec4) {}
+u32 ImGui::ColorConvertFloat4ToU32(ImVec4) { return 0; }
+void ImGui::Indent(float) {}
+void ImGui::ItemSize(ImVec2, float) {}
+int ImGui::PlotLines(const char*, const float*, int, int, const char*, float, float, ImVec2, int) { return 0; }
+void ImGui::PopFont() {}
+void ImGui::PopStyleColor(int) {}
+void ImGui::PopStyleVar(int) {}
+void ImGui::PushFont(ImFont*, float) {}
+void ImGui::PushStyleColor(int, ImVec4) {}
+void ImGui::PushStyleVar(int, ImVec2) {}
+void ImGui::PushStyleVar(int, float) {}
+void ImGui::SetCursorPosX(float) {}
+void ImGui::SetCursorPosY(float) {}
+void ImGui::SetCursorScreenPos(ImVec2) {}
+void ImGui::SetNextWindowPos(ImVec2, int, ImVec2) {}
+void ImGui::SetNextWindowSize(ImVec2, int) {}
+void ImGui::SetScrollY(float) {}
+bool ImGui::TableNextColumn() { return false; }
+void ImGui::TextUnformatted(const char*, const char*) {}
+void ImGui::Unindent(float) {}
+ImVec2 ImDrawList::AddLine(ImVec2, ImVec2, u32, float) { return ImVec2(0,0); }
+ImVec2 ImDrawList::AddRectFilled(ImVec2, ImVec2, u32, float, int) { return ImVec2(0,0); }
+ImVec2 ImDrawList::AddText(ImFont*, float, ImVec2, u32, const char*, const char*, float, const ImVec4*) { return ImVec2(0,0); }
+float ImFont::CalcTextSizeA(float, float, float, const char*, const char*, const char**) { return 0; }
+
+// ── ImGuiManager stubs ──
+void ImGuiManager::ClearSoftwareCursor(u32) {}
+ImFont* ImGuiManager::GetFixedFont() { return nullptr; }
+float ImGuiManager::GetFontSizeStandard() { return 0; }
+float ImGuiManager::GetGlobalScale() { return 1.0f; }
+ImFont* ImGuiManager::GetOSDFont() { return nullptr; }
+ImFont* ImGuiManager::GetStandardFont() { return nullptr; }
+float ImGuiManager::GetWindowHeight() { return 0; }
+float ImGuiManager::GetWindowWidth() { return 0; }
+bool ImGuiManager::HasSoftwareCursor(u32) { return false; }
+bool ImGuiManager::Initialize() { return false; }
+void ImGuiManager::NewFrame() {}
+void ImGuiManager::ProcessGenericInputEvent(GenericInputBinding, InputLayout, float) {}
+void ImGuiManager::ProcessHostKeyEvent(InputBindingKey, float) {}
+void ImGuiManager::ProcessPointerAxisEvent(InputBindingKey, float) {}
+void ImGuiManager::ProcessPointerButtonEvent(InputBindingKey, float) {}
+void ImGuiManager::ReloadFonts() {}
+void ImGuiManager::RenderOSD() {}
+void ImGuiManager::RequestScaleUpdate() {}
+void ImGuiManager::SetSoftwareCursor(u32, std::string, float, u32) {}
+void ImGuiManager::SetSoftwareCursorPosition(u32, float, float) {}
+void ImGuiManager::Shutdown(bool) {}
+bool ImGuiManager::SkipFrame() { return true; }
+void ImGuiManager::UpdateMousePosition(float, float) {}
+void ImGuiManager::WindowResized() {}
+void* ImGuiFullscreen::LoadTexture(std::string_view) { return nullptr; }
+
+// ── Threading stubs ──
+void Threading::Sleep(int) {}
+void Threading::SleepUntil(u64) {}
+void ShortSpin() {}
+
+// ── Common stubs ──
+void Common::InhibitScreensaver(bool) {}
+void AbortWithMessage(const char*) { std::abort(); }
+u64 GetAvailablePhysicalMemory() { return 512ULL * 1024 * 1024; }
+std::string GetOSVersionString() { return "iOS"; }
+u64 GetPhysicalMemory() { return 512ULL * 1024 * 1024; }
+std::unique_ptr<HTTPDownloader> HTTPDownloader::Create(std::string) { return nullptr; }
+
+// ── RGBA8Image stubs ──
+RGBA8Image::RGBA8Image() = default;
+RGBA8Image::RGBA8Image(RGBA8Image&&) = default;
+bool RGBA8Image::SaveToFile(const char*, u8) const { return false; }
+
+// ── DEV9 stubs ──
+void DEV9CheckChanges(const Pcsx2Config&) {}
+void DEV9async(u32) {}
+void DEV9close() {}
+void DEV9init() {}
+void DEV9open() {}
+
+// ── CsoFileReader stub ──
+CsoFileReader::CsoFileReader() = default;
+
+// ── FileAccessHelper stub ──
+FileAccessHelper::~FileAccessHelper() = default;
+
+// ── cpuinfo C API stubs (for references from compiled PCSX2 objects) ──
+extern "C" {
+    void cpuinfo_initialize() {}
+    const struct cpuinfo_core* cpuinfo_get_core(unsigned int) { return nullptr; }
+    const struct cpuinfo_processor* cpuinfo_get_processor(unsigned int) { return nullptr; }
+}
+
+// ── Global variable stubs ──
+alignas(16) u32 _SPIN_TIME_NS = 0;
+CDVD_SourceType _CDVDapi_Disc = CDVD_SourceType::Iso;
+ImGuiContext* _GImGui = nullptr;
+u64 _GSDumpReplayerCpu = 0;
+u32 g_host_hotkeys = 0;

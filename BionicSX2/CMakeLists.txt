@@ -10,7 +10,7 @@ set(PCSX2_ROOT "${CMAKE_SOURCE_DIR}/../pcsx2")
 
 add_definitions(-DPCSX2_TARGET_IOS)
 add_definitions(-DTARGET_OS_IOS)
-add_definitions(-DVIXL_CODE_BUFFER_MMAP=0)
+add_definitions(-DVIXL_CODE_BUFFER_MMAP)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
     set(IOS_DEPS "${CMAKE_SOURCE_DIR}/ios-deps/install")
@@ -27,7 +27,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
     find_library(ZSTD_LIB       zstd        PATHS "${IOS_DEPS}/lib" NO_DEFAULT_PATH)
     find_library(LZMA_LIB       lzma        PATHS "${IOS_DEPS}/lib" NO_DEFAULT_PATH)
     find_library(ZIP_LIB        zip         PATHS "${IOS_DEPS}/lib" NO_DEFAULT_PATH)
-    find_library(CHDR_LIB       chdr        PATHS "${IOS_DEPS}/lib" NO_DEFAULT_PATH)
+    find_library(CHDR_LIB       chdr-static PATHS "${IOS_DEPS}/lib" NO_DEFAULT_PATH)
     find_library(CUBEB_LIB      cubeb       PATHS "${IOS_DEPS}/lib" NO_DEFAULT_PATH)
     find_library(SOUNDTOUCH_LIB SoundTouch  PATHS "${IOS_DEPS}/lib" NO_DEFAULT_PATH)
 
