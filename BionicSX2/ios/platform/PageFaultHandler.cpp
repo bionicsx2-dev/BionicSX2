@@ -27,6 +27,19 @@
 // IOKit/CoreGraphics dependencies removed per Section 4.3/8.4
 // Note: HostSys::GetRuntimePageSize/GetRuntimeCacheLineSize defined in HostSys_iOS.mm
 
+// sysctlbyname_T is static in common/Darwin/DarwinMisc.cpp — need local copy
+template <typename T>
+static std::optional<T> sysctlbyname_T(const char* name)
+{
+    T output = 0;
+    size_t output_size = sizeof(output);
+    if (sysctlbyname(name, &output, &output_size, nullptr, 0) != 0)
+        return std::nullopt;
+    if (output_size != sizeof(output))
+        return std::nullopt;
+    return output;
+}
+
 // Mach exception handler for page faults (vtlb fastmem)
 // Audit Section 6.2: Mach exception ports are available on iOS
 

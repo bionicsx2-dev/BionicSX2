@@ -40,7 +40,10 @@ jobs:
       - name: Build BionicSX2
         working-directory: build-ios
         run: |
-          cmake --build . --config Release -j$(sysctl -n hw.logicalcpu) 2>&1 | tee build.log
+          cmake --build . --config Release -j$(sysctl -n hw.logicalcpu) > build.log 2>&1
+          exit_code=$?
+          cat build.log
+          exit $exit_code
 
       - name: Package IPA
         run: |
