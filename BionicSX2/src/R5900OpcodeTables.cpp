@@ -14,12 +14,12 @@
 #include "x86/iR5900Shift.h"
 #include "x86/iR5900Branch.h"
 #include "x86/iR5900Jump.h"
-#endif
 #include "x86/iR5900LoadStore.h"
 #include "x86/iR5900Move.h"
 #include "x86/iMMI.h"
 #include "x86/iCOP0.h"
 #include "x86/iFPU.h"
+#endif
 
 namespace R5900
 {
