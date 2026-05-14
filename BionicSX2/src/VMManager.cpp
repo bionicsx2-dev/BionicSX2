@@ -58,7 +58,14 @@
 #include "IconsFontAwesome.h"
 #include "IconsPromptFont.h"
 #include "cpuinfo.h"
+#ifndef PCSX2_TARGET_IOS
 #include "discord_rpc.h"
+static bool s_discord_presence_active = false;
+static time_t s_discord_presence_time_epoch;
+static const char* s_discord_presence_app_id = "1458595419499139094";
+static const char* s_discord_presence_large_image_key = "4k-pcsx2";
+static const char* s_discord_presence_large_image_text = "PCSX2 PS2 Emulator";
+#endif
 #include "fmt/format.h"
 
 #include <atomic>
@@ -143,9 +150,11 @@ namespace VMManager
 	static void EnsureCPUInfoInitialized();
 	static void SetEmuThreadAffinities();
 
+#ifndef PCSX2_TARGET_IOS
 	static void InitializeDiscordPresence();
 	static void ShutdownDiscordPresence();
 	static void PollDiscordPresence();
+#endif
 } // namespace VMManager
 
 static constexpr u32 SETTINGS_VERSION = 1;
@@ -196,12 +205,6 @@ static u64 s_session_resume_timestamp = 0;
 static u64 s_session_accumulated_playtime = 0;
 
 static bool s_screensaver_inhibited = false;
-
-static bool s_discord_presence_active = false;
-static time_t s_discord_presence_time_epoch;
-static const char* s_discord_presence_app_id = "1458595419499139094";
-static const char* s_discord_presence_large_image_key = "4k-pcsx2";
-static const char* s_discord_presence_large_image_text = "PCSX2 PS2 Emulator";
 
 // Making GSDumpReplayer.h dependent on R5900.h is a no-no, since the GS uses it.
 extern R5900cpu GSDumpReplayerCpu;
@@ -423,8 +426,10 @@ bool VMManager::Internal::CPUThreadInitialize()
 
 	ReloadPINE();
 
+	#ifndef PCSX2_TARGET_IOS
 	if (EmuConfig.EnableDiscordPresence)
 		InitializeDiscordPresence();
+	#endif
 
 	// Check for advanced settings status and warn the user if its enabled
 	if (Host::GetBaseBoolSettingValue("UI", "ShowAdvancedSettings", false))
@@ -435,7 +440,9 @@ bool VMManager::Internal::CPUThreadInitialize()
 
 void VMManager::Internal::CPUThreadShutdown()
 {
+	#ifndef PCSX2_TARGET_IOS
 	ShutdownDiscordPresence();
+	#endif
 
 	PINEServer::Deinitialize();
 
@@ -1155,7 +1162,9 @@ void VMManager::UpdateDiscDetails(bool booting)
 	{
 		Achievements::GameChanged(s_disc_crc, s_current_crc);
 		ReloadPINE();
+		#ifndef PCSX2_TARGET_IOS
 		UpdateDiscordPresence(s_state.load(std::memory_order_relaxed) == VMState::Initializing);
+		#endif
 		FileMcd_Reopen(memcardFilters.empty() ? s_disc_serial : memcardFilters);
 	}
 }
@@ -1366,7 +1375,11 @@ VMBootResult VMManager::Initialize(const VMBootParameters& boot_params, Error* e
 
 		Achievements::GameChanged(0, 0);
 		FullscreenUI::GameChanged(s_title, std::string(), s_disc_serial, 0, 0);
-		UpdateDiscordPresence(true);
+		#ifndef PCSX2_TARGET_IOS
+		#ifndef PCSX2_TARGET_IOS
+	UpdateDiscordPresence(true);
+	#endif
+		#endif
 		Host::OnGameChanged(s_title, std::string(), std::string(), s_disc_serial, 0, 0);
 
 		UpdateGameSettingsLayer();
@@ -1687,7 +1700,9 @@ void VMManager::Shutdown(bool save_resume_state)
 
 	Achievements::GameChanged(0, 0);
 	FullscreenUI::GameChanged(s_title, std::string(), s_disc_serial, 0, 0);
+	#ifndef PCSX2_TARGET_IOS
 	UpdateDiscordPresence(true);
+	#endif
 	Host::OnGameChanged(s_title, std::string(), std::string(), s_disc_serial, 0, 0);
 
 	s_fast_boot_requested = false;
@@ -2772,7 +2787,9 @@ void VMManager::IdlePollUpdate()
 {
 	Achievements::IdleUpdate();
 
+	#ifndef PCSX2_TARGET_IOS
 	PollDiscordPresence();
+	#endif
 
 	InputManager::PollSources();
 }
@@ -2926,7 +2943,9 @@ void VMManager::Internal::VSyncOnCPUThread()
 
 	Achievements::FrameUpdate();
 
+	#ifndef PCSX2_TARGET_IOS
 	PollDiscordPresence();
+	#endif
 }
 
 void VMManager::Internal::PollInputOnCPUThread()
@@ -3097,6 +3116,7 @@ void VMManager::CheckForMiscConfigChanges(const Pcsx2Config& old_config)
 	if (EmuConfig.InhibitScreensaver != old_config.InhibitScreensaver)
 		UpdateInhibitScreensaver(EmuConfig.InhibitScreensaver && VMManager::GetState() == VMState::Running);
 
+	#ifndef PCSX2_TARGET_IOS
 	if (EmuConfig.EnableDiscordPresence != old_config.EnableDiscordPresence)
 	{
 		if (EmuConfig.EnableDiscordPresence)
@@ -3104,6 +3124,7 @@ void VMManager::CheckForMiscConfigChanges(const Pcsx2Config& old_config)
 		else
 			ShutdownDiscordPresence();
 	}
+	#endif
 
 	if (HasValidVM() && (EmuConfig.EnableThreadPinning != old_config.EnableThreadPinning ||
 							(s_thread_affinities_set && EmuConfig.Speedhacks.vuThread != old_config.Speedhacks.vuThread)))
@@ -3767,6 +3788,7 @@ void VMManager::ReloadPINE()
 		PINEServer::Initialize(EmuConfig.PINESlot);
 }
 
+#ifndef PCSX2_TARGET_IOS
 void VMManager::InitializeDiscordPresence()
 {
 	if (s_discord_presence_active)
@@ -3841,6 +3863,7 @@ void VMManager::PollDiscordPresence()
 
 	Discord_RunCallbacks();
 }
+#endif
 
 bool VMManager::WriteBytesToEESIORXFIFO(const std::span<const u8> data)
 {
