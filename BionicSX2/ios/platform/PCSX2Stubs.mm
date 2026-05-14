@@ -5,6 +5,7 @@
 #import <Foundation/Foundation.h>
 #include "PrecompiledHeader.h"
 #include "common/Assertions.h"
+#include "common/HostSys.h"
 #include "common/CocoaTools.h"
 #include "common/Darwin/DarwinMisc.h"
 #include "Config.h"
