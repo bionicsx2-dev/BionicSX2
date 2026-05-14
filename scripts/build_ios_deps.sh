@@ -82,16 +82,12 @@ if [ ! -f "$INSTALL_DIR/lib/libpng16.a" ]; then
         -DPNG_SHARED=OFF -DPNG_STATIC=ON -DPNG_TESTS=OFF -DZLIB_ROOT="$INSTALL_DIR"
 fi
 
-# libzip
+# libzip — use bundled source (has HAVE_MEMCPY_S/HAVE_STRNCPY_S guards for MSVC-only)
 if [ ! -f "$INSTALL_DIR/lib/libzip.a" ]; then
-    if [ ! -d "$SRC_DIR/libzip" ]; then
-        git clone --depth 1 --branch v1.11.2 https://github.com/nih-at/libzip.git "$SRC_DIR/libzip"
-    fi
-    build_lib libzip "$SRC_DIR/libzip" \
+    build_lib libzip "$REPO_ROOT/pcsx2/3rdparty/libzip" \
         -DBUILD_TOOLS=OFF -DBUILD_REGRESS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOC=OFF \
         -DENABLE_COMMONCRYPTO=ON -DENABLE_GNUTLS=OFF -DENABLE_MBEDTLS=OFF -DENABLE_OPENSSL=OFF \
-        -DZLIB_ROOT="$INSTALL_DIR" \
-        -DHAVE_MEMCPY_S=0
+        -DZLIB_ROOT="$INSTALL_DIR"
 fi
 
 # freetype
