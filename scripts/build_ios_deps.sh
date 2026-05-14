@@ -58,7 +58,8 @@ if [ ! -f "$INSTALL_DIR/lib/liblzma.a" ]; then
         -DXZ_TOOL_SCRIPTS=OFF -DENABLE_NLS=OFF \
         -DCREATE_XZ_SYMLINKS=OFF -DCREATE_LZMA_SYMLINKS=OFF \
         -DCMAKE_EXE_LINKER_FLAGS="" \
-        -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER
+        -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER \
+        -DCMAKE_DISABLE_FIND_PACKAGE_Intl=ON
 fi
 
 # fmt
@@ -86,12 +87,23 @@ if [ ! -f "$INSTALL_DIR/lib/libpng16.a" ]; then
         git clone --depth 1 --branch v1.6.44 https://github.com/glennrp/libpng.git "$SRC_DIR/libpng"
     fi
     build_lib libpng "$SRC_DIR/libpng" \
-        -DPNG_SHARED=OFF -DPNG_STATIC=ON -DPNG_TESTS=OFF -DZLIB_ROOT="$INSTALL_DIR"
+        -DPNG_SHARED=OFF -DPNG_STATIC=ON -DPNG_TESTS=OFF -DPNG_BUILD_FRAMEWORK=OFF \
+        -DCMAKE_SKIP_RPATH=ON -DCMAKE_SKIP_INSTALL_RPATH=ON \
+        -DZLIB_ROOT="$INSTALL_DIR"
 fi
 
 # libzip — use bundled source (has HAVE_MEMCPY_S/HAVE_STRNCPY_S guards for MSVC-only)
 if [ ! -f "$INSTALL_DIR/lib/libzip.a" ]; then
-    build_lib libzip "$REPO_ROOT/pcsx2/3rdparty/libzip" \
+    # Copy bundled source to build dir so we can patch without modifying original
+    LZIP_SRC="$REPO_ROOT/pcsx2/3rdparty/libzip"
+    LZIP_BUILD_SRC="$SRC_DIR/libzip"
+    rm -rf "$LZIP_BUILD_SRC"
+    cp -R "$LZIP_SRC" "$LZIP_BUILD_SRC"
+    # Disable zstd (target name mismatch Zstd::Zstd vs zstd::libzstd)
+    sed -i '' 's/set(HAVE_LIBZSTD TRUE)/set(HAVE_LIBZSTD FALSE)/' "$LZIP_BUILD_SRC/CMakeLists.txt"
+    sed -i '' '/zip_algorithm_zstd/d' "$LZIP_BUILD_SRC/CMakeLists.txt"
+    sed -i '' '/Zstd::Zstd/d' "$LZIP_BUILD_SRC/CMakeLists.txt"
+    build_lib libzip "$LZIP_BUILD_SRC" \
         -DBUILD_TOOLS=OFF -DBUILD_REGRESS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOC=OFF \
         -DENABLE_COMMONCRYPTO=ON -DENABLE_GNUTLS=OFF -DENABLE_MBEDTLS=OFF -DENABLE_OPENSSL=OFF \
         -DZLIB_ROOT="$INSTALL_DIR"
