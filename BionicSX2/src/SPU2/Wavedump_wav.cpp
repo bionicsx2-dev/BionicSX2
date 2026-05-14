@@ -3,7 +3,7 @@
 
 #include "SPU2/Debug.h"
 #include "SPU2/spu2.h"
-#include "pcsx2/Config.h"
+#include "Config.h"
 #include "fmt/format.h"
 
 #include "common/Console.h"

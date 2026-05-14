@@ -16,7 +16,7 @@
 #include "Host.h"
 #include "Input/InputManager.h"
 #include "MTGS.h"
-#include "pcsx2/GS.h"
+#include "GS/GS.h"
 #include "GS/Renderers/Null/GSRendererNull.h"
 #include "GS/Renderers/HW/GSRendererHW.h"
 #include "GS/Renderers/HW/GSTextureReplacements.h"

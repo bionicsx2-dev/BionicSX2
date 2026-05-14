@@ -20,6 +20,7 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/arm64/Vif_Dynarec.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GS/Renderers/SW/GSDrawScanlineCodeGenerator.arm64.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GS/Renderers/SW/GSSetupPrimCodeGenerator.arm64.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GS/GSCapture.cpp
 )
 # DEV9 is fully stubbed on iOS via PCSX2Stubs.mm — exclude all source files
 file(GLOB_RECURSE DEV9_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/DEV9/*.cpp)

@@ -12,7 +12,7 @@
 #include "GSDumpReplayer.h"
 #include "Host.h"
 #include "PerformanceMetrics.h"
-#include "pcsx2/Config.h"
+#include "Config.h"
 #include "VMManager.h"
 
 #include "common/FileSystem.h"
