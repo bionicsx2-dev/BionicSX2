@@ -19,6 +19,8 @@ build_lib() {
         -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_SHARED_LIBS=OFF \
+        -DCMAKE_FIND_ROOT_PATH="$INSTALL_DIR" \
+        -DCMAKE_PREFIX_PATH="$INSTALL_DIR" \
         "$@"
     cmake --build "$BUILD_DIR/$NAME" --config Release -j"$PARALLEL"
     cmake --install "$BUILD_DIR/$NAME"
