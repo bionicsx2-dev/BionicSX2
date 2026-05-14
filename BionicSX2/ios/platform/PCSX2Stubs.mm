@@ -14,6 +14,8 @@
 #include "GSDumpReplayer.h"
 #include "GameDatabase.h"
 #include "GS/GS.h"
+#include "Host/AudioStream.h"
+#include "Input/InputManager.h"
 
 // ── Category 1: SW Renderer JIT / x86 stubs ──
 // Audit Section 0-B: GSDrawScanlineCodeGenerator/GSSetupPrimCodeGenerator excluded on iOS
