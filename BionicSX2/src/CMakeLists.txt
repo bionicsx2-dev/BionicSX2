@@ -29,6 +29,13 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES ${DEV9_SOURCES})
 add_library(pcsx2-core STATIC ${PCSX2_CORE_SOURCES})
 
 # Find system dependencies (cross-compiling for iOS, so use host paths)
+execute_process(COMMAND brew --prefix libpng
+  OUTPUT_VARIABLE PNG_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_QUIET)
+if(PNG_PREFIX)
+  target_include_directories(pcsx2-core PUBLIC "${PNG_PREFIX}/include")
+endif()
+
 execute_process(COMMAND brew --prefix lz4
   OUTPUT_VARIABLE LZ4_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE
   ERROR_QUIET)

@@ -26,7 +26,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          brew install cmake ninja lz4
+          brew install cmake ninja lz4 libpng
 
       - name: Generate CMake Files
         run: |
