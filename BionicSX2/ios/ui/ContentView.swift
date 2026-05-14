@@ -12,7 +12,7 @@ struct ContentView: View {
     @State private var showGameView = false
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List(games, id: \.self) { game in
                 Button(action: {
                     startGame(path: game)
