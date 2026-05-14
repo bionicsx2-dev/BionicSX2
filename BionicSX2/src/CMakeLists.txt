@@ -23,6 +23,19 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES
 
 add_library(pcsx2-core STATIC ${PCSX2_CORE_SOURCES})
 
+# Find system dependencies
+list(APPEND CMAKE_MODULE_PATH "${PCSX2_ROOT}/cmake")
+find_package(LZ4 QUIET)
+if(LZ4_FOUND)
+  target_include_directories(pcsx2-core PUBLIC "${LZ4_INCLUDE_DIR}")
+else()
+  # Fallback: try Homebrew path
+  find_path(LZ4_INCLUDE_DIR lz4.h /opt/homebrew/opt/lz4/include /usr/local/opt/lz4/include)
+  if(LZ4_INCLUDE_DIR)
+    target_include_directories(pcsx2-core PUBLIC "${LZ4_INCLUDE_DIR}")
+  endif()
+endif()
+
 target_include_directories(pcsx2-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${PCSX2_ROOT}
