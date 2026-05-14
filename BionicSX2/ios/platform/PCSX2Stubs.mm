@@ -5,7 +5,6 @@
 #import <Foundation/Foundation.h>
 #include "PrecompiledHeader.h"
 #include "common/Assertions.h"
-#include "MetalRenderer.h"
 
 // ── Category 1: SW Renderer JIT / x86 stubs ──
 // Audit Section 0-B: GSDrawScanlineCodeGenerator/GSSetupPrimCodeGenerator excluded on iOS
@@ -176,8 +175,10 @@ void ReadOSDConfigParames() {}
 std::string ShiftJIS_ConvertString(const char* src) { return std::string(src); }
 
 // Metal adapter list and device factory
+class GSDevice;
+class GSDeviceMTL;
 std::vector<GSAdapterInfo> GetMetalAdapterList() { return {}; }
-GSDevice* MakeGSDeviceMTL() { return new GSDeviceMTL(); }
+GSDevice* MakeGSDeviceMTL() { return nullptr; }
 
 // AudioStream factory stubs
 std::unique_ptr<AudioStream> AudioStream::CreateCubebAudioStream(u32, const AudioStreamParameters&, const char*, const char*, bool, Error*) { return nullptr; }

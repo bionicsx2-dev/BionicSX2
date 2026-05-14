@@ -3,6 +3,7 @@
 // STATUS: NEW — all Host:: callbacks required by the linker
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #include "Host.h"
 #include "common/ProgressCallback.h"
 #include "common/SettingsInterface.h"

@@ -9,6 +9,7 @@ add_library(metal-backend STATIC ${METAL_SOURCES})
 
 target_include_directories(metal-backend PUBLIC
     ${CMAKE_SOURCE_DIR}/src
+    ${PCSX2_ROOT}
     ${PCSX2_ROOT}/common
     ${PCSX2_ROOT}/3rdparty/include
     ${PCSX2_ROOT}/3rdparty/fmt/include
