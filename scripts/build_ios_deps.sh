@@ -159,7 +159,8 @@ if [ ! -f "$INSTALL_DIR/lib/libcubeb.a" ]; then
         git clone --depth 1 https://github.com/mozilla/cubeb.git "$SRC_DIR/cubeb"
     fi
     build_lib cubeb "$SRC_DIR/cubeb" \
-        -DBUILD_TESTS=OFF -DBUILD_TOOLS=OFF -DUSE_SANITIZERS=OFF
+        -DBUILD_TESTS=OFF -DBUILD_TOOLS=OFF -DUSE_SANITIZERS=OFF \
+        -DUSE_AUDIOUNIT=OFF -DCMAKE_CXX_FLAGS="-DTARGET_OS_IPHONE=1"
 fi
 
 echo ""
