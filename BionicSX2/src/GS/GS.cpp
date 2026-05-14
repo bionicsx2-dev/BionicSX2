@@ -26,8 +26,8 @@
 #include "GS/Renderers/OpenGL/GSDeviceOGL.h"
 #endif
 
-#if defined(__APPLE__) && !defined(PCSX2_TARGET_IOS)
-#include "GS/Renderers/Metal/GSMetalCPPAccessible.h"
+#ifdef __APPLE__
+#include "MetalRenderer.h"
 #endif
 
 #ifdef ENABLE_VULKAN

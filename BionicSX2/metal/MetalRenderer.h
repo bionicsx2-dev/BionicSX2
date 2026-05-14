@@ -27,6 +27,7 @@
 #include <atomic>
 #include <memory>
 #include <mutex>
+#include <vector>
 #include <unordered_map>
 #include <utility>
 
@@ -159,5 +160,8 @@ public:
 };
 
 extern GSDeviceMTL* gsDeviceMTL;
+
+GSDevice* MakeGSDeviceMTL();
+std::vector<GSAdapterInfo> GetMetalAdapterList();
 
 #endif // __APPLE__

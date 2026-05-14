@@ -40,6 +40,7 @@ endif()
 
 target_include_directories(pcsx2-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/metal
     ${PCSX2_ROOT}
     ${PCSX2_ROOT}/3rdparty/include
     ${PCSX2_ROOT}/3rdparty/fmt/include
@@ -98,6 +99,7 @@ file(WRITE "${CMAKE_BINARY_DIR}/stubs/zstd.h"
     "#include <stddef.h>\n"
     "typedef struct ZSTD_CCtx_s ZSTD_CCtx;\n"
     "typedef ZSTD_CCtx ZSTD_CStream;\n"
+    "typedef ZSTD_CCtx ZSTD_DStream;\n"
     "typedef struct ZSTD_inBuffer_s { const void* src; size_t size; size_t pos; } ZSTD_inBuffer;\n"
     "typedef struct ZSTD_outBuffer_s { void* dst; size_t size; size_t pos; } ZSTD_outBuffer;\n"
     "typedef enum { ZSTD_e_continue=0, ZST_e_flush=1, ZSTD_e_end=2 } ZSTD_EndDirective;\n"
@@ -111,6 +113,9 @@ file(WRITE "${CMAKE_BINARY_DIR}/stubs/zstd.h"
     "static inline size_t ZSTD_CCtx_setParameter(ZSTD_CCtx*, int, int) { return 0; }\n"
     "static inline size_t ZSTD_compressStream2(ZSTD_CStream*, ZSTD_outBuffer*, ZSTD_inBuffer*, ZSTD_EndDirective) { return 0; }\n"
     "static inline size_t ZSTD_freeCStream(ZSTD_CStream*) { return 0; }\n"
+    "static inline ZSTD_DStream* ZSTD_createDStream() { return nullptr; }\n"
+    "static inline size_t ZSTD_freeDStream(ZSTD_DStream*) { return 0; }\n"
+    "static inline size_t ZSTD_decompressStream(ZSTD_DStream*, ZSTD_outBuffer*, ZSTD_inBuffer*) { return 0; }\n"
     "static inline unsigned ZSTD_isError(size_t) { return 0; }\n"
     "static inline const char* ZSTD_getErrorName(size_t) { return \"\"; }\n"
 )
