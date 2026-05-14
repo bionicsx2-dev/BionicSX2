@@ -43,7 +43,6 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES ${RDEBUG_SOURCES})
 # DebugTools — exclude everything except DisR5900asm (needed by R5900OpcodeTables)
 file(GLOB DEBUGTOOLS_SOURCES DebugTools/*.cpp)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${DEBUGTOOLS_SOURCES})
-target_sources(PCSX2 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/DebugTools/DisR5900asm.cpp)
 # USB is fully stubbed on iOS via PCSX2Stubs.mm
 file(GLOB_RECURSE USB_EYETOY_SOURCES USB/usb-eyetoy/*.cpp USB/usb-eyetoy/*.mm)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${USB_EYETOY_SOURCES})
@@ -73,6 +72,9 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES
 )
 
 add_library(PCSX2 STATIC ${PCSX2_CORE_SOURCES})
+
+# Add back DisR5900asm.cpp (excluded via DebugTools glob above, but needed by R5900OpcodeTables)
+target_sources(PCSX2 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/DebugTools/DisR5900asm.cpp)
 
 # Find system dependencies (cross-compiling for iOS, so use host paths)
 execute_process(COMMAND brew --prefix libpng
