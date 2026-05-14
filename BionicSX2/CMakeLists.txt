@@ -4,7 +4,7 @@
 # STATUS: YELLOW — iOS cross-compilation configuration
 
 cmake_minimum_required(VERSION 3.20)
-project(BionicSX2 C CXX OBJC OBJCXX)
+project(BionicSX2 C CXX OBJC OBJCXX Swift)
 
 # Audit Section 13.5: iOS cross-compilation toolchain
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/cmake/ios.toolchain.cmake")
