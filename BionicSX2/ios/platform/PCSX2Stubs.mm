@@ -182,6 +182,5 @@ std::optional<u32> InputManager::ConvertHostKeyboardStringToCode(const std::stri
 std::optional<std::string> InputManager::ConvertHostKeyboardCodeToString(u32 code) { return std::nullopt; }
 const char* InputManager::ConvertHostKeyboardCodeToIcon(u32 code) { return ""; }
 
-// DebugInterface stubs
-bool DebugInterface::parseExpression(PostfixExpression& exp, u64& dest, std::string& error) { return false; }
+// DebugInterface stubs — parseExpression now inline in Breakpoints.h iOS path
 u32 standardizeBreakpointAddress(u32 addr) { return addr; }
