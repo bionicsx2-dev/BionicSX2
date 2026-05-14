@@ -23,6 +23,8 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/GS/Renderers/SW/GSDrawScanlineCodeGenerator.all.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GS/Renderers/SW/GSSetupPrimCodeGenerator.all.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GS/GSCapture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameDatabase.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SIO/Memcard/MemoryCardFolder.cpp
 )
 # DEV9 is fully stubbed on iOS via PCSX2Stubs.mm — exclude all source files
 file(GLOB_RECURSE DEV9_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/DEV9/*.cpp)
