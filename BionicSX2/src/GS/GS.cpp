@@ -26,7 +26,7 @@
 #include "GS/Renderers/OpenGL/GSDeviceOGL.h"
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(PCSX2_TARGET_IOS)
 #include "GS/Renderers/Metal/GSMetalCPPAccessible.h"
 #endif
 

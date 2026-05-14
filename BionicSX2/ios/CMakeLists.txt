@@ -15,6 +15,7 @@ add_library(ios-platform STATIC
 
 target_include_directories(ios-platform PUBLIC
     ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/metal
     ${PCSX2_ROOT}/common
     ${PCSX2_ROOT}/3rdparty/include
     ${PCSX2_ROOT}/3rdparty/fmt/include
