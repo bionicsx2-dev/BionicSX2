@@ -3,7 +3,6 @@
 #include "PrecompiledHeader.h"
 #include "GS/GSCapture.h"
 #include "GS/GSDump.h"
-#include "GS/Renderers/SW/GSDrawScanline.h"
 #include "ImGui/FullscreenUI.h"
 #include "ImGui/ImGuiManager.h"
 #include "Achievements.h"
@@ -30,11 +29,15 @@ std::unique_ptr<GSDumpBase> GSDumpBase::CreateUncompressedDump(const std::string
 std::unique_ptr<GSDumpBase> GSDumpBase::CreateXzDump(const std::string& fn, u32 crc, const std::string& serial, const GSPrivRegSet* regs, bool comp) { return nullptr; }
 std::unique_ptr<GSDumpBase> GSDumpBase::CreateZstDump(const std::string& fn, u32 crc, const std::string& serial, const GSPrivRegSet* regs, bool comp) { return nullptr; }
 
-// SW Renderer code generators
-GSDrawScanlineCodeGenerator::GSDrawScanlineCodeGenerator(u64 key, void* code, size_t maxsize) {}
-void GSDrawScanlineCodeGenerator::Generate() {}
-GSSetupPrimCodeGenerator::GSSetupPrimCodeGenerator(u64 key, void* code, size_t maxsize) {}
-void GSSetupPrimCodeGenerator::Generate() {}
+// SW Renderer code generators — stubbed without headers to avoid vixl dependency
+struct GSDrawScanlineCodeGenerator {
+    GSDrawScanlineCodeGenerator(u64, void*, size_t) {}
+    void Generate() {}
+};
+struct GSSetupPrimCodeGenerator {
+    GSSetupPrimCodeGenerator(u64, void*, size_t) {}
+    void Generate() {}
+};
 
 // FullscreenUI
 bool FullscreenUI::OpenAchievementsWindow() { return false; }
