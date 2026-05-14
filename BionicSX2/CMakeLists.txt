@@ -48,7 +48,7 @@ add_subdirectory(metal)
 add_executable(BionicSX2 MACOSX_BUNDLE)
 
 target_link_libraries(BionicSX2 PRIVATE
-    pcsx2-core
+    PCSX2
     ios-platform
     metal-backend
 )

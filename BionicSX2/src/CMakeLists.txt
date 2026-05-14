@@ -43,7 +43,7 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES ${RDEBUG_SOURCES})
 # DebugTools — exclude everything except DisR5900asm (needed by R5900OpcodeTables)
 file(GLOB DEBUGTOOLS_SOURCES DebugTools/*.cpp)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${DEBUGTOOLS_SOURCES})
-target_sources(pcsx2-core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/DebugTools/DisR5900asm.cpp)
+target_sources(PCSX2 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/DebugTools/DisR5900asm.cpp)
 # USB is fully stubbed on iOS via PCSX2Stubs.mm
 file(GLOB_RECURSE USB_EYETOY_SOURCES USB/usb-eyetoy/*.cpp USB/usb-eyetoy/*.mm)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${USB_EYETOY_SOURCES})
@@ -72,19 +72,19 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/CDVD/CsoFileReader.cpp
 )
 
-add_library(pcsx2-core STATIC ${PCSX2_CORE_SOURCES})
+add_library(PCSX2 STATIC ${PCSX2_CORE_SOURCES})
 
 # Find system dependencies (cross-compiling for iOS, so use host paths)
 execute_process(COMMAND brew --prefix libpng
   OUTPUT_VARIABLE PNG_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE
   ERROR_QUIET)
 if(PNG_PREFIX)
-  target_include_directories(pcsx2-core PUBLIC "${PNG_PREFIX}/include")
+  target_include_directories(PCSX2 PUBLIC "${PNG_PREFIX}/include")
 endif()
 
 # lz4: available via ios-deps when built; CsoFileReader excluded below
 
-target_include_directories(pcsx2-core PUBLIC
+target_include_directories(PCSX2 PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${PCSX2_ROOT}
     ${PCSX2_ROOT}/3rdparty/include
@@ -106,8 +106,8 @@ target_include_directories(pcsx2-core PUBLIC
     ${PCSX2_ROOT}/3rdparty/ccc/src
 )
 
-target_compile_features(pcsx2-core PUBLIC cxx_std_20)
-target_compile_definitions(pcsx2-core PUBLIC PCSX2_TARGET_IOS)
+target_compile_features(PCSX2 PUBLIC cxx_std_20)
+target_compile_definitions(PCSX2 PUBLIC PCSX2_TARGET_IOS)
 
 # Generate svnrev.h for BuildVersion.cpp
 file(WRITE "${CMAKE_BINARY_DIR}/svnrev.h"
@@ -120,7 +120,7 @@ file(WRITE "${CMAKE_BINARY_DIR}/svnrev.h"
     "#define GIT_HASH \"unknown\"\n"
     "#define GIT_DATE \"unknown\"\n"
 )
-target_include_directories(pcsx2-core PUBLIC "${CMAKE_BINARY_DIR}")
+target_include_directories(PCSX2 PUBLIC "${CMAKE_BINARY_DIR}")
 
 # Generate stub headers for external dependencies not bundled in 3rdparty
 file(WRITE "${CMAKE_BINARY_DIR}/stubs/c4/substr_fwd.hpp"
@@ -189,10 +189,10 @@ file(WRITE "${CMAKE_BINARY_DIR}/stubs/cpuinfo.h"
     "static inline const struct cpuinfo_core* cpuinfo_get_core(unsigned int) { return 0; }\n"
     "enum cpuinfo_uarch_ { cpuinfo_uarch_unknown = 0 };\n"
 )
-target_include_directories(pcsx2-core PUBLIC "${CMAKE_BINARY_DIR}/stubs")
+target_include_directories(PCSX2 PUBLIC "${CMAKE_BINARY_DIR}/stubs")
 
 # Disable exceptions and strict aliasing (matching PCSX2 build conventions)
-target_compile_options(pcsx2-core PRIVATE
+target_compile_options(PCSX2 PRIVATE
     -fno-exceptions
     -fno-strict-aliasing
     -Wno-parentheses
@@ -225,10 +225,10 @@ list(REMOVE_ITEM COMMON_SOURCES
     ${PCSX2_ROOT}/common/emitter/simd.cpp
     ${PCSX2_ROOT}/common/emitter/x86emitter.cpp
 )
-target_sources(pcsx2-core PRIVATE ${COMMON_SOURCES})
-target_include_directories(pcsx2-core PUBLIC ${PCSX2_ROOT}/common)
-target_compile_options(pcsx2-core PRIVATE -fobjc-arc)
-target_link_options(pcsx2-core PRIVATE -fobjc-link-runtime)
-target_link_libraries(pcsx2-core PUBLIC "-framework Foundation")
+target_sources(PCSX2 PRIVATE ${COMMON_SOURCES})
+target_include_directories(PCSX2 PUBLIC ${PCSX2_ROOT}/common)
+target_compile_options(PCSX2 PRIVATE -fobjc-arc)
+target_link_options(PCSX2 PRIVATE -fobjc-link-runtime)
+target_link_libraries(PCSX2 PUBLIC "-framework Foundation")
 # lz4 not available for iOS cross-compilation (Homebrew provides macOS binary only).
 # CsoFileReader excluded above; lz4-dependent features stubbed.
