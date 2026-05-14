@@ -99,15 +99,23 @@ if [ ! -f "$INSTALL_DIR/lib/libzip.a" ]; then
     LZIP_BUILD_SRC="$SRC_DIR/libzip"
     rm -rf "$LZIP_BUILD_SRC"
     cp -R "$LZIP_SRC" "$LZIP_BUILD_SRC"
-    # Disable zstd (target name mismatch Zstd::Zstd vs zstd::libzstd)
-    sed -i '' 's/set(HAVE_LIBZSTD TRUE)/set(HAVE_LIBZSTD FALSE)/' "$LZIP_BUILD_SRC/CMakeLists.txt"
-    sed -i '' '/zip_algorithm_zstd/d' "$LZIP_BUILD_SRC/CMakeLists.txt"
-    sed -i '' '/Zstd::Zstd/d' "$LZIP_BUILD_SRC/CMakeLists.txt"
+    python3 -c "
+import sys
+src = '$LZIP_BUILD_SRC/CMakeLists.txt'
+lines = open(src).readlines()
+with open(src, 'w') as f:
+    for line in lines:
+        if 'set(HAVE_LIBZSTD TRUE)' in line:
+            line = line.replace('TRUE', 'FALSE')
+        if 'zip_algorithm_zstd.c' in line or 'Zstd::Zstd' in line:
+            continue
+        if 'target_link_libraries(zip PRIVATE ZLIB::ZLIB)' in line:
+            f.write('find_package(ZLIB REQUIRED)\n')
+        f.write(line)
+"
     build_lib libzip "$LZIP_BUILD_SRC" \
-        -DLIBZIP_ENABLE_TOOLS=OFF -DLIBZIP_ENABLE_REGRESS=OFF \
-        -DLIBZIP_ENABLE_EXAMPLES=OFF -DLIBZIP_ENABLE_DOCS=OFF \
-        -DLIBZIP_USE_COMMONCRYPTO=ON -DENABLE_GNUTLS=OFF -DENABLE_MBEDTLS=OFF -DENABLE_OPENSSL=OFF \
-        -DZLIB_LIBRARY="$INSTALL_DIR/lib/libz.a" -DZLIB_INCLUDE_DIR="$INSTALL_DIR/include"
+        -DZLIB_LIBRARY="$INSTALL_DIR/lib/libz.a" \
+        -DZLIB_INCLUDE_DIR="$INSTALL_DIR/include"
 fi
 
 # freetype
