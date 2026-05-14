@@ -13,3 +13,7 @@ set(PKG_CONFIG_EXECUTABLE "" CACHE FILEPATH "" FORCE)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
+
+# Swift compiler target — must be set before project() to avoid macOS misdetection
+set(CMAKE_Swift_COMPILER_TARGET "arm64-apple-ios16.0")
+set(CMAKE_Swift_FLAGS "-target arm64-apple-ios16.0 -sdk ${CMAKE_OSX_SYSROOT}")
