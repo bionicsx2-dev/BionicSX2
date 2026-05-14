@@ -146,10 +146,11 @@ fi
 # soundtouch
 if [ ! -f "$INSTALL_DIR/lib/libSoundTouch.a" ]; then
     if [ ! -d "$SRC_DIR/soundtouch" ]; then
-        git clone --depth 1 --branch 2.3.3 https://codeberg.org/soundtouch/soundtouch.git "$SRC_DIR/soundtouch"
+        git clone --depth 1 https://codeberg.org/soundtouch/soundtouch.git "$SRC_DIR/soundtouch"
     fi
     build_lib soundtouch "$SRC_DIR/soundtouch" \
-        -DCMAKE_CXX_FLAGS="-DSOUNDTOUCH_DISABLE_X86_OPTIMIZATIONS"
+        -DCMAKE_CXX_FLAGS="-DSOUNDTOUCH_DISABLE_X86_OPTIMIZATIONS" \
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 fi
 
 # cubeb
