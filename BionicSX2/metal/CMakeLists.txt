@@ -11,6 +11,10 @@ target_include_directories(metal-backend PUBLIC
     ${CMAKE_SOURCE_DIR}/src
     ${PCSX2_ROOT}/common
     ${PCSX2_ROOT}/3rdparty/include
+    ${PCSX2_ROOT}/3rdparty/fmt/include
+    ${PCSX2_ROOT}/3rdparty/fast_float/include
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/stubs
 )
 
 target_compile_features(metal-backend PUBLIC cxx_std_20)
