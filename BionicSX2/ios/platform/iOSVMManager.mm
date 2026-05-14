@@ -37,7 +37,7 @@ bool StartVM(const char* isoPath) {
     NSLog(@"[BionicSX2] cpuReset() completed");
 
     // Step 4: initialize GS with Metal backend
-    if (!GSopen(nullptr, "Metal", 0)) {
+    if (!GSopen(EmuConfig.GS, GSRendererType::Metal, nullptr, GSVSyncMode::Disabled, false)) {
         NSLog(@"[BionicSX2] GSopen failed");
         return false;
     }
