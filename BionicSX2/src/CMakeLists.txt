@@ -14,12 +14,23 @@ file(GLOB_RECURSE PCSX2_CORE_SOURCES
 # Host.cpp is replaced by ios/platform/Host_iOS.mm (Audit Phase 0-F Category 7)
 # arm64/Vif_Dynarec.cpp is excluded per Audit Section 2.3-F
 # SW renderer JIT files excluded per Phase 0-B
+# Exclude platform-specific files
 list(REMOVE_ITEM PCSX2_CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Host.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/arm64/Vif_Dynarec.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GS/Renderers/SW/GSDrawScanlineCodeGenerator.arm64.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/GS/Renderers/SW/GSSetupPrimCodeGenerator.arm64.cpp
 )
+# DEV9/ATA uses Windows API (hddNativeHandle, INVALID_HANDLE_VALUE) — not for iOS
+file(GLOB_RECURSE DEV9_ATA_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/DEV9/ATA/*.cpp)
+file(GLOB_RECURSE DEV9_ATA_CMD_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/DEV9/ATA/Commands/*.cpp)
+list(REMOVE_ITEM PCSX2_CORE_SOURCES ${DEV9_ATA_SOURCES} ${DEV9_ATA_CMD_SOURCES})
+# DEV9/Win32 is Windows-only
+file(GLOB_RECURSE DEV9_WIN32_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/DEV9/Win32/*.cpp)
+list(REMOVE_ITEM PCSX2_CORE_SOURCES ${DEV9_WIN32_SOURCES})
+# DEV9 Sessions — various platform-specific references
+file(GLOB_RECURSE DEV9_SESSIONS_WIN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/DEV9/Sessions/*/Win32/*.cpp)
+list(REMOVE_ITEM PCSX2_CORE_SOURCES ${DEV9_SESSIONS_WIN_SOURCES})
 
 add_library(pcsx2-core STATIC ${PCSX2_CORE_SOURCES})
 
