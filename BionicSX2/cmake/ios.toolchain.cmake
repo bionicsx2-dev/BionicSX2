@@ -11,6 +11,9 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 15.0)
 # Audit Section 10.3: Use iphoneos SDK
 set(CMAKE_OSX_SYSROOT iphoneos)
 
+# Swift compiler target for iOS arm64
+set(CMAKE_Swift_COMPILER_TARGET arm64-apple-ios15.0)
+
 # Disable simulator builds
 set(CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH YES)
 
