@@ -86,21 +86,26 @@ file(WRITE "${CMAKE_BINARY_DIR}/svnrev.h"
 target_include_directories(pcsx2-core PUBLIC "${CMAKE_BINARY_DIR}")
 
 # Generate stub headers for external dependencies not bundled in 3rdparty
+file(WRITE "${CMAKE_BINARY_DIR}/stubs/c4/substr_fwd.hpp"
+    "#pragma once\n"
+    "namespace c4 { using csubstr = const char*; using substr = char*; }\n"
+)
 file(WRITE "${CMAKE_BINARY_DIR}/stubs/ryml.hpp"
     "#pragma once\n"
     "#include <string>\n"
     "#include <vector>\n"
+    "#include \"c4/substr_fwd.hpp\"\n"
     "namespace ryml {\n"
     "struct Tree {};\n"
     "struct NodeRef {};\n"
     "inline Tree parse_in_place(c4::substr) { return Tree(); }\n"
     "inline Tree parse_in_arena(c4::csubstr) { return Tree(); }\n"
     "}\n"
-    "namespace c4 { using csubstr = const char*; using substr = char*; }\n"
 )
-file(WRITE "${CMAKE_BINARY_DIR}/stubs/c4/substr_fwd.hpp"
+file(WRITE "${CMAKE_BINARY_DIR}/stubs/ryml_std.hpp"
     "#pragma once\n"
-    "namespace c4 { using csubstr = const char*; using substr = char*; }\n"
+    "#include <string>\n"
+    "template<typename T> inline void swap(T&, T&) noexcept {}\n"
 )
 file(WRITE "${CMAKE_BINARY_DIR}/stubs/zstd.h"
     "#pragma once\n"
