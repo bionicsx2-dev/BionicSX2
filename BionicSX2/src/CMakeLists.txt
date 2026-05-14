@@ -193,6 +193,7 @@ list(REMOVE_ITEM COMMON_SOURCES
     ${PCSX2_ROOT}/common/HTTPDownloaderWinHTTP.cpp
     ${PCSX2_ROOT}/common/HTTPDownloaderCurl.cpp
     ${PCSX2_ROOT}/common/Image.cpp
+    ${PCSX2_ROOT}/common/StackWalker.cpp
     ${PCSX2_ROOT}/common/CocoaTools.mm
     ${PCSX2_ROOT}/common/Windows/WinThreads.cpp
     ${PCSX2_ROOT}/common/Windows/WinHostSys.cpp
