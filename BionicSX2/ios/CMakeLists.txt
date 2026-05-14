@@ -8,7 +8,7 @@ add_library(ios-platform STATIC
     platform/iOSVMManager.mm
     platform/CocoaTools.mm
     platform/AudioStream_iOS.mm
-    platform/Filesystem_iOS.cpp
+    platform/Filesystem_iOS.mm
     platform/Host_iOS.mm
     platform/PCSX2Stubs.mm
 )
@@ -17,6 +17,7 @@ target_include_directories(ios-platform PUBLIC
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/metal
     ${PCSX2_ROOT}
+    ${PCSX2_ROOT}/common
     ${PCSX2_ROOT}/3rdparty/include
     ${PCSX2_ROOT}/3rdparty/fmt/include
     ${PCSX2_ROOT}/3rdparty/fast_float/include
