@@ -25,7 +25,7 @@ add_library(pcsx2-core STATIC ${PCSX2_CORE_SOURCES})
 
 target_include_directories(pcsx2-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${PCSX2_ROOT}/common
+    ${PCSX2_ROOT}
     ${PCSX2_ROOT}/3rdparty/include
     ${PCSX2_ROOT}/3rdparty/fmt/include
     ${PCSX2_ROOT}/3rdparty/fast_float/include

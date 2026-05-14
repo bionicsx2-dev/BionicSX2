@@ -5,7 +5,7 @@
 
 #include "common/WindowInfo.h"
 #include "SaveState.h"
-#include "pcsx2/Config.h"
+#include "Config.h"
 
 #include <map>
 #include <optional>

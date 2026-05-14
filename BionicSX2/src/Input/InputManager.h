@@ -14,7 +14,7 @@
 #include "common/SettingsInterface.h"
 #include "common/WindowInfo.h"
 
-#include "pcsx2/Config.h"
+#include "Config.h"
 
 class SmallStringBase;
 

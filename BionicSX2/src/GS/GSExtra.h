@@ -4,7 +4,7 @@
 #pragma once
 
 #include "GS/GSVector.h"
-#include "pcsx2/Config.h"
+#include "Config.h"
 #include "common/BitUtils.h"
 
 #include <utility>
