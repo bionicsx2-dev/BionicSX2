@@ -99,7 +99,12 @@ struct hash<PipelineSelectorMTL>
 {
     std::size_t operator()(const PipelineSelectorMTL& s) const noexcept
     {
-        return HashMulti(s.ps.key_lo, s.ps.key_hi, s.extras.fullkey, s.vs.key);
+        std::size_t h = 0;
+        HashCombine(h, s.ps.key_lo);
+        HashCombine(h, s.ps.key_hi);
+        HashCombine(h, s.extras.fullkey);
+        HashCombine(h, s.vs.key);
+        return h;
     }
 };
 }
@@ -148,9 +153,16 @@ public:
 
     bool Create(GSVSyncMode vsync_mode, bool allow_present_throttle) override;
     void Destroy() override;
+
+    // Internal texture helpers (routed through CreateSurface, separate decl for .mm)
+    GSTexture* CreateRenderTarget(int width, int height, GSTexture::Format format, const std::string_view name);
+    GSTexture* CreateDepthStencil(int width, int height, GSTexture::Format format, const std::string_view name);
+    GSTexture* CreateTexture(int width, int height, int levels, GSTexture::Format format, const std::string_view name);
+    GSTexture* CreateUploadTexture(int width, int height, int levels, GSTexture::Format format, const std::string_view name);
 };
 
 extern GSDeviceMTL* gsDeviceMTL;
+id<MTLDevice> GetMetalDevice();
 
 GSDevice* MakeGSDeviceMTL();
 std::vector<GSAdapterInfo> GetMetalAdapterList();

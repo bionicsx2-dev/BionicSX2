@@ -7,13 +7,13 @@
 #include "MetalRenderer.h"
 
 GSTextureMTL::GSTextureMTL(GSDeviceMTL* dev, MRCOwned<id<MTLTexture>> texture, Type type, Format format)
-    : GSTexture(type, format)
-    , m_dev(dev)
+    : m_dev(dev)
     , m_texture(std::move(texture))
 {
+    m_type = type;
+    m_format = format;
     m_size.x = [m_texture width];
     m_size.y = [m_texture height];
-    m_native_handle = (void*)m_texture.Get();
 }
 
 GSTextureMTL::~GSTextureMTL()
@@ -63,7 +63,7 @@ void GSTextureMTL::GenerateMipmap()
     id<MTLTexture> tex = m_texture;
     if ([tex mipmapLevelCount] > 1)
     {
-        id<MTLCommandBuffer> cmdbuf = [[GetDevice() newCommandQueue] commandBuffer];
+        id<MTLCommandBuffer> cmdbuf = [[GetMetalDevice() newCommandQueue] commandBuffer];
         id<MTLBlitCommandEncoder> blit = [cmdbuf blitCommandEncoder];
         [blit generateMipmapsForTexture:tex];
         [blit endEncoding];

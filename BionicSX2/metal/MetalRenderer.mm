@@ -30,6 +30,8 @@ static id<MTLDevice> GetDevice()
     return dev;
 }
 
+id<MTLDevice> GetMetalDevice() { return GetDevice(); }
+
 GSDeviceMTL::GSDeviceMTL()
 {
     gsDeviceMTL = this;
@@ -130,7 +132,7 @@ GSTexture* GSDeviceMTL::CreateRenderTarget(int width, int height, GSTexture::For
                                                                                    height:height
                                                                                 mipmapped:NO];
     desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
-    desc.storageMode = MTLResourceStorageModePrivate;
+    desc.storageMode = (MTLStorageMode)MTLResourceStorageModePrivate;
 
     id<MTLTexture> tex = [GetDevice() newTextureWithDescriptor:desc];
     if (!tex) return nullptr;
@@ -145,7 +147,7 @@ GSTexture* GSDeviceMTL::CreateDepthStencil(int width, int height, GSTexture::For
                                                                                    height:height
                                                                                 mipmapped:NO];
     desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
-    desc.storageMode = MTLResourceStorageModePrivate;
+    desc.storageMode = (MTLStorageMode)MTLResourceStorageModePrivate;
 
     id<MTLTexture> tex = [GetDevice() newTextureWithDescriptor:desc];
     if (!tex) return nullptr;
@@ -161,7 +163,7 @@ GSTexture* GSDeviceMTL::CreateTexture(int width, int height, int levels, GSTextu
                                                                                 mipmapped:(levels > 1)];
     if (levels > 1) desc.mipmapLevelCount = levels;
     desc.usage = MTLTextureUsageShaderRead;
-    desc.storageMode = MTLResourceStorageModeShared;
+    desc.storageMode = (MTLStorageMode)MTLResourceStorageModeShared;
 
     id<MTLTexture> tex = [GetDevice() newTextureWithDescriptor:desc];
     if (!tex) return nullptr;

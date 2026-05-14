@@ -14,8 +14,8 @@ class FrameSync
 {
 public:
     FrameSync(id<MTLDevice> device)
+        : m_fence(MRCTransfer([device newFence]))
     {
-        m_fence = [device newFence];
     }
 
     ~FrameSync() = default;
