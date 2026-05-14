@@ -7,7 +7,9 @@
 add_library(ios-platform STATIC
     platform/iOSVMManager.mm
     platform/CocoaTools.mm
-    platform/AudioStream_iOS.mm
+    # AudioStream_iOS.mm excluded — uses upstream AudioStream API not
+    # available in BionicSX2 minimal base class. TODO: Re-implement.
+    # platform/AudioStream_iOS.mm
     platform/Filesystem_iOS.mm
     platform/Host_iOS.mm
     platform/PCSX2Stubs.mm

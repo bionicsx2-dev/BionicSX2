@@ -42,14 +42,12 @@ void iOSVMManager_Init()
           EmuConfig.Cpu.Recompiler.EnableIOP);
 
     // ── Step 2: Allocate emulated memory before CPU init ──
-    // Audit Section 2.3-E: SysMemory::Reset() must be called BEFORE cpuReset()
-    // On macOS this happens at VMManager::StartVM():1525, before cpuReset():1526.
-    // Without this, recWritePtr remains nullptr (BSS zero-init).
-    if (!SysMemory::Reset()) {
-        NSLog(@"[BionicSX2] CRITICAL: SysMemory::Reset() failed");
+    // Audit Section 2.3-E: SysMemory::Allocate() must be called BEFORE cpuReset()
+    if (!SysMemory::Allocate()) {
+        NSLog(@"[BionicSX2] CRITICAL: SysMemory::Allocate() failed");
         return;
     }
-    NSLog(@"[BionicSX2] SysMemory::Reset() succeeded");
+    NSLog(@"[BionicSX2] SysMemory::Allocate() succeeded");
 
     // ── Step 3: Initialize CPU and hardware ──
     // Audit Section 2.3-E: cpuReset() calls hwReset() which calls vif0Reset/vif1Reset
