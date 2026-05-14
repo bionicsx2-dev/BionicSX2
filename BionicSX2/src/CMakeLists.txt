@@ -34,10 +34,10 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Input/XInputSource.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Input/SDLInputSource.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/IopModuleNames.cpp
+)
 # RDebug (DECI2 debugger protocol) references IOP internals not compiled on iOS
 file(GLOB RDEBUG_SOURCES RDebug/*.cpp)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${RDEBUG_SOURCES})
-)
 # DEV9 is fully stubbed on iOS via PCSX2Stubs.mm — exclude all source files
 file(GLOB_RECURSE DEV9_SOURCES DEV9/*.cpp)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${DEV9_SOURCES})
