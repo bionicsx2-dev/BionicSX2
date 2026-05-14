@@ -189,6 +189,7 @@ target_compile_options(pcsx2-core PRIVATE
 file(GLOB_RECURSE COMMON_SOURCES ${PCSX2_ROOT}/common/*.cpp ${PCSX2_ROOT}/common/*.mm)
 # Exclude platform-specific files not for iOS
 list(REMOVE_ITEM COMMON_SOURCES
+    ${PCSX2_ROOT}/common/Darwin/DarwinMisc.cpp
     ${PCSX2_ROOT}/common/CocoaTools.mm
     ${PCSX2_ROOT}/common/Windows/WinThreads.cpp
     ${PCSX2_ROOT}/common/Windows/WinHostSys.cpp
