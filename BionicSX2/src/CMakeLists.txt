@@ -40,6 +40,11 @@ file(GLOB RDEBUG_SOURCES RDebug/*.cpp)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${RDEBUG_SOURCES})
 # USB/usb-eyetoy uses platform-specific webcam APIs (jpeglib, V4L2, DirectShow, AVFoundation)
 # USB/usb-pad-sdl-ff includes SDLInputSource.h (SDL3 dependency)
+# DebugTools/SymbolGuardian includes <ccc/ast.h> — ccc submodule often absent on CI
+list(REMOVE_ITEM PCSX2_CORE_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/DebugTools/SymbolGuardian.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/DebugTools/MipsStackWalk.cpp
+)
 # USB is fully stubbed on iOS via PCSX2Stubs.mm
 file(GLOB_RECURSE USB_EYETOY_SOURCES USB/usb-eyetoy/*.cpp USB/usb-eyetoy/*.mm)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${USB_EYETOY_SOURCES})
