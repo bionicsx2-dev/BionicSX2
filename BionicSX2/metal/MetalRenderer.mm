@@ -41,7 +41,7 @@ GSDeviceMTL::~GSDeviceMTL()
     gsDeviceMTL = nullptr;
 }
 
-bool GSDeviceMTL::Create(const WindowInfo& wi, std::string_view adapter, FeatureLevel feature_level, Error* error)
+bool GSDeviceMTL::Create(GSVSyncMode vsync_mode, bool allow_present_throttle)
 {
     NSLog(@"[BionicSX2] GSDeviceMTL::Create starting");
 
@@ -62,65 +62,69 @@ void GSDeviceMTL::Destroy()
     NSLog(@"[BionicSX2] GSDeviceMTL::Destroy");
 }
 
-void GSDeviceMTL::DestroySurface()
+// --- GSDevice pure virtual overrides ---
+
+RenderAPI GSDeviceMTL::GetRenderAPI() const { return RenderAPI::Metal; }
+bool GSDeviceMTL::HasSurface() const { return false; }
+void GSDeviceMTL::DestroySurface() {}
+bool GSDeviceMTL::UpdateWindow() { return true; }
+bool GSDeviceMTL::SupportsExclusiveFullscreen() const { return false; }
+GSDevice::PresentResult GSDeviceMTL::BeginPresent(bool frame_skip) { return PresentResult::OK; }
+void GSDeviceMTL::EndPresent() {}
+void GSDeviceMTL::SetVSyncMode(GSVSyncMode mode, bool allow_present_throttle) {}
+std::string GSDeviceMTL::GetDriverInfo() const { return "Metal"; }
+bool GSDeviceMTL::SetGPUTimingEnabled(bool enabled) { return false; }
+float GSDeviceMTL::GetAndResetAccumulatedGPUTime() { return 0.0f; }
+void GSDeviceMTL::PushDebugGroup(const char* fmt, ...) {}
+void GSDeviceMTL::PopDebugGroup() {}
+void GSDeviceMTL::InsertDebugMessage(DebugMessageCategory category, const char* fmt, ...) {}
+
+std::unique_ptr<GSDownloadTexture> GSDeviceMTL::CreateDownloadTexture(u32 width, u32 height, GSTexture::Format format)
 {
+    return nullptr;
 }
 
-bool GSDeviceMTL::SetLimits(bool wrapper)
+void GSDeviceMTL::CopyRect(GSTexture* sTex, GSTexture* dTex, const GSVector4i& r, u32 destX, u32 destY) {}
+
+void GSDeviceMTL::PresentRect(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, PresentShader shader, float shaderTime, bool linear) {}
+
+void GSDeviceMTL::UpdateCLUTTexture(GSTexture* sTex, float sScale, u32 offsetX, u32 offsetY, GSTexture* dTex, u32 dOffset, u32 dSize) {}
+
+void GSDeviceMTL::ConvertToIndexedTexture(GSTexture* sTex, float sScale, u32 offsetX, u32 offsetY, u32 SBW, u32 SPSM, GSTexture* dTex, u32 DBW, u32 DPSM) {}
+
+void GSDeviceMTL::FilteredDownsampleTexture(GSTexture* sTex, GSTexture* dTex, u32 downsample_factor, const GSVector2i& clamp_min, const GSVector4& dRect) {}
+
+void GSDeviceMTL::RenderHW(GSHWDrawConfig& config) {}
+void GSDeviceMTL::ClearSamplerCache() {}
+
+void GSDeviceMTL::DoStretchRect(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, GSHWDrawConfig::ColorMaskSelector cms, ShaderConvert shader, bool linear) {}
+void GSDeviceMTL::DoFXAA(GSTexture* sTex, GSTexture* dTex) {}
+void GSDeviceMTL::DoShadeBoost(GSTexture* sTex, GSTexture* dTex, const float params[4]) {}
+bool GSDeviceMTL::DoCAS(GSTexture* sTex, GSTexture* dTex, bool sharpen_only, const std::array<u32, NUM_CAS_CONSTANTS>& constants) { return false; }
+
+void GSDeviceMTL::DoMerge(GSTexture* sTex[3], GSVector4* sRect, GSTexture* dTex, GSVector4* dRect, const GSRegPMODE& PMODE, const GSRegEXTBUF& EXTBUF, u32 c, const bool linear) {}
+
+void GSDeviceMTL::DoInterlace(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, ShaderInterlace shader, bool linear, const InterlaceConstantBuffer& cb) {}
+
+GSTexture* GSDeviceMTL::CreateSurface(GSTexture::Type type, int width, int height, int levels, GSTexture::Format format)
 {
-    return true;
+    switch (type)
+    {
+        case GSTexture::Type::RenderTarget:
+            return CreateRenderTarget(width, height, format, {});
+        case GSTexture::Type::DepthStencil:
+            return CreateDepthStencil(width, height, format, {});
+        case GSTexture::Type::Texture:
+            return CreateTexture(width, height, levels, format, {});
+        default:
+            return nullptr;
+    }
 }
 
-bool GSDeviceMTL::UsesOffscreenRendering() const
-{
-    return true;
-}
-
-bool GSDeviceMTL::IsDummyDevice() const
-{
-    return false;
-}
-
-GSDevice::FeatureLevel GSDeviceMTL::GetFeatureLevel() const
-{
-    return FeatureLevel::Metal;
-}
-
-void GSDeviceMTL::SetEnableFXAA(bool enable) {}
-void GSDeviceMTL::SetEnableCAS(bool enable) {}
-void GSDeviceMTL::SetEnableShadeBoost(bool enable) {}
-void GSDeviceMTL::SetShadeBoostParams(float contrast, float brightness, float saturation) {}
-
-std::string GSDeviceMTL::GetDeviceName() const
-{
-    return std::string([[GetDevice() name] UTF8String]);
-}
-
-std::string GSDeviceMTL::GetDriverInfo() const
-{
-    return "Metal";
-}
-
-bool GSDeviceMTL::DoFullscreenSwap(Error* error)
-{
-    return true;
-}
-
-void GSDeviceMTL::DoStretchRect(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, GSHWDrawConfig::ColorMaskSelector cms, ShaderConvert shader, bool linear)
-{
-}
-
-void GSDeviceMTL::ClearRenderTarget(GSTexture* t, const GSVector4& c) {}
-void GSDeviceMTL::ClearRenderTarget(GSTexture* t, const GSVector4& c, const GSVector4i& r) {}
-void GSDeviceMTL::ClearDepth(GSTexture* t) {}
-void GSDeviceMTL::ClearStencil(GSTexture* t) {}
-
-bool GSDeviceMTL::CreateInterlacePassthroughBuffer() { return true; }
-bool GSDeviceMTL::CreateInterlaceBuffer(const void* buff, size_t size) { return true; }
+// --- Texture creation helpers (kept as internal helpers, no longer direct overrides) ---
 
 GSTexture* GSDeviceMTL::CreateRenderTarget(int width, int height, GSTexture::Format format, const std::string_view name)
 {
-    // PORTED: MTLTextureDescriptor usage unchanged (Audit Section 4.2)
     MTLTextureDescriptor* desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
                                                                                     width:width
                                                                                    height:height
@@ -169,23 +173,3 @@ GSTexture* GSDeviceMTL::CreateUploadTexture(int width, int height, int levels, G
 {
     return CreateTexture(width, height, levels, format, name);
 }
-
-std::unique_ptr<GSDownloadTexture> GSDeviceMTL::CreateDownloadTexture(u32 width, u32 height, GSTexture::Format format)
-{
-    return nullptr;
-}
-
-void GSDeviceMTL::ConvertToIndexedTexture(GSTexture* dst, GSVector4i dst_area, GSTexture* src, GSVector4i src_area, int first_src_level, int num_src_levels, bool linear) {}
-void GSDeviceMTL::CopyRect(GSTexture* src, GSTexture* dest, const GSVector4i& src_rect, const GSVector4i& dest_rect) {}
-void GSDeviceMTL::StretchRect(const GSVector4i& src_rect, const GSVector4i& dst_rect, GSTexture* src, const GSVector4i* src_uv_rect, GSTexture* dest, const GSVector4i* dest_uv_rect, int shader, bool linear, bool blend) {}
-void GSDeviceMTL::PresentRect(const GSVector4i& src_rect, const GSVector4i& dst_rect, GSTexture* src, const GSVector4i* src_uv_rect, GSTexture* dest, const GSVector4i* dest_uv_rect, int shader, bool linear, bool blend) {}
-void GSDeviceMTL::InvalidateCpuReadback() {}
-void GSDeviceMTL::AgePoolFrames() {}
-void GSDeviceMTL::RecycleObject(const GSTexture* tex) {}
-std::unique_ptr<GSTexture> GSDeviceMTL::CreateSparseTexture(const std::string_view name) { return nullptr; }
-void GSDeviceMTL::Flush() {}
-void GSDeviceMTL::SubmitImage(GSTexture* tex, const void* data, u32 pitch, u32 layer) {}
-void GSDeviceMTL::RenderHW(GSHWDrawConfig& config) {}
-bool GSDeviceMTL::SupportsTextureCopyOffscreen() const { return true; }
-bool GSDeviceMTL::TestCreateTexture(GSDevice::FeatureLevel feature_level) { return true; }
-void GSDeviceMTL::PurgePools() {}

@@ -99,7 +99,7 @@ struct hash<PipelineSelectorMTL>
 {
     std::size_t operator()(const PipelineSelectorMTL& s) const noexcept
     {
-        return HashMulti(s.ps.full, s.extras.fullkey, s.vs.full);
+        return HashMulti(s.ps.key_lo, s.ps.key_hi, s.extras.fullkey, s.vs.key);
     }
 };
 }
@@ -115,46 +115,39 @@ public:
     static constexpr u32 NUM_COMMAND_BUFFERS = 16;
 
     // Inherited via GSDevice
-    bool SetLimits(bool wrapper) override;
-    bool Create(const WindowInfo& wi, std::string_view adapter, FeatureLevel feature_level, Error* error) override;
-    bool UsesOffscreenRendering() const override;
-    bool IsDummyDevice() const override;
-    FeatureLevel GetFeatureLevel() const override;
-    void Destroy() override;
+    RenderAPI GetRenderAPI() const override;
+    bool HasSurface() const override;
     void DestroySurface() override;
-    void SetEnableFXAA(bool enable) override;
-    void SetEnableCAS(bool enable) override;
-    void SetEnableShadeBoost(bool enable) override;
-    void SetShadeBoostParams(float contrast, float brightness, float saturation) override;
-    std::string GetDeviceName() const override;
+    bool UpdateWindow() override;
+    bool SupportsExclusiveFullscreen() const override;
+    PresentResult BeginPresent(bool frame_skip) override;
+    void EndPresent() override;
+    void SetVSyncMode(GSVSyncMode mode, bool allow_present_throttle) override;
     std::string GetDriverInfo() const override;
-    bool DoFullscreenSwap(Error* error) override;
-    void DoStretchRect(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, GSHWDrawConfig::ColorMaskSelector cms, ShaderConvert shader, bool linear) override;
-    void ClearRenderTarget(GSTexture* t, const GSVector4& c) override;
-    void ClearRenderTarget(GSTexture* t, const GSVector4& c, const GSVector4i& r) override;
-    void ClearDepth(GSTexture* t) override;
-    void ClearStencil(GSTexture* t) override;
-    bool CreateInterlacePassthroughBuffer() override;
-    bool CreateInterlaceBuffer(const void* buff, size_t size) override;
-    GSTexture* CreateRenderTarget(int width, int height, GSTexture::Format format, const std::string_view name) override;
-    GSTexture* CreateDepthStencil(int width, int height, GSTexture::Format format, const std::string_view name) override;
-    GSTexture* CreateTexture(int width, int height, int levels, GSTexture::Format format, const std::string_view name) override;
-    GSTexture* CreateUploadTexture(int width, int height, int levels, GSTexture::Format format, const std::string_view name) override;
+    bool SetGPUTimingEnabled(bool enabled) override;
+    float GetAndResetAccumulatedGPUTime() override;
+    void PushDebugGroup(const char* fmt, ...) override;
+    void PopDebugGroup() override;
+    void InsertDebugMessage(DebugMessageCategory category, const char* fmt, ...) override;
     std::unique_ptr<GSDownloadTexture> CreateDownloadTexture(u32 width, u32 height, GSTexture::Format format) override;
-    void ConvertToIndexedTexture(GSTexture* dst, GSVector4i dst_area, GSTexture* src, GSVector4i src_area, int first_src_level, int num_src_levels, bool linear) override;
-    void CopyRect(GSTexture* src, GSTexture* dest, const GSVector4i& src_rect, const GSVector4i& dest_rect) override;
-    void StretchRect(const GSVector4i& src_rect, const GSVector4i& dst_rect, GSTexture* src, const GSVector4i* src_uv_rect, GSTexture* dest, const GSVector4i* dest_uv_rect, int shader, bool linear, bool blend) override;
-    void PresentRect(const GSVector4i& src_rect, const GSVector4i& dst_rect, GSTexture* src, const GSVector4i* src_uv_rect, GSTexture* dest, const GSVector4i* dest_uv_rect, int shader, bool linear, bool blend) override;
-    void InvalidateCpuReadback() override;
-    void AgePoolFrames() override;
-    void RecycleObject(const GSTexture* tex) override;
-    std::unique_ptr<GSTexture> CreateSparseTexture(const std::string_view name) override;
-    void Flush() override;
-    void SubmitImage(GSTexture* tex, const void* data, u32 pitch, u32 layer) override;
+    void CopyRect(GSTexture* sTex, GSTexture* dTex, const GSVector4i& r, u32 destX, u32 destY) override;
+    void PresentRect(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, PresentShader shader, float shaderTime, bool linear) override;
+    void UpdateCLUTTexture(GSTexture* sTex, float sScale, u32 offsetX, u32 offsetY, GSTexture* dTex, u32 dOffset, u32 dSize) override;
+    void ConvertToIndexedTexture(GSTexture* sTex, float sScale, u32 offsetX, u32 offsetY, u32 SBW, u32 SPSM, GSTexture* dTex, u32 DBW, u32 DPSM) override;
+    void FilteredDownsampleTexture(GSTexture* sTex, GSTexture* dTex, u32 downsample_factor, const GSVector2i& clamp_min, const GSVector4& dRect) override;
     void RenderHW(GSHWDrawConfig& config) override;
-    bool SupportsTextureCopyOffscreen() const override;
-    bool TestCreateTexture(GSDevice::FeatureLevel feature_level) override;
-    void PurgePools() override;
+    void ClearSamplerCache() override;
+    void DoStretchRect(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, GSHWDrawConfig::ColorMaskSelector cms, ShaderConvert shader, bool linear) override;
+    void DoFXAA(GSTexture* sTex, GSTexture* dTex) override;
+    void DoShadeBoost(GSTexture* sTex, GSTexture* dTex, const float params[4]) override;
+    bool DoCAS(GSTexture* sTex, GSTexture* dTex, bool sharpen_only, const std::array<u32, NUM_CAS_CONSTANTS>& constants) override;
+    void DoMerge(GSTexture* sTex[3], GSVector4* sRect, GSTexture* dTex, GSVector4* dRect, const GSRegPMODE& PMODE, const GSRegEXTBUF& EXTBUF, u32 c, const bool linear) override;
+    void DoInterlace(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, ShaderInterlace shader, bool linear, const InterlaceConstantBuffer& cb) override;
+
+    GSTexture* CreateSurface(GSTexture::Type type, int width, int height, int levels, GSTexture::Format format) override;
+
+    bool Create(GSVSyncMode vsync_mode, bool allow_present_throttle) override;
+    void Destroy() override;
 };
 
 extern GSDeviceMTL* gsDeviceMTL;
