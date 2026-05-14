@@ -56,6 +56,7 @@ target_include_directories(pcsx2-core PUBLIC
     ${PCSX2_ROOT}/3rdparty/zydis/include
     ${PCSX2_ROOT}/3rdparty/vixl/include
     ${PCSX2_ROOT}/3rdparty/freesurround/include
+    ${PCSX2_ROOT}/3rdparty/ccc/src
 )
 
 target_compile_features(pcsx2-core PUBLIC cxx_std_20)
