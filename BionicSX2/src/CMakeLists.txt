@@ -30,6 +30,8 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Host/CubebAudioStream.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ImGui/ImGuiFullscreen.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ImGui/ImGuiManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Input/DInputSource.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Input/XInputSource.cpp
 )
 # DEV9 is fully stubbed on iOS via PCSX2Stubs.mm — exclude all source files
 file(GLOB_RECURSE DEV9_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/DEV9/*.cpp)
