@@ -21,6 +21,7 @@
 #include "GS/GSDump.h"
 #include "GS/GSPng.h"
 #include "Host/AudioStream.h"
+#include "Achievements.h"
 #include "ImGui/FullscreenUI.h"
 #include "ImGui/ImGuiManager.h"
 #include "Input/InputManager.h"
@@ -221,7 +222,7 @@ void AudioStream::EmptyBuffer() {}
 void AudioStream::SetNominalRate(float) {}
 void AudioStream::SetOutputVolume(u32) {}
 void AudioStream::SetStretchEnabled(bool) {}
-bool AudioStream::WriteChunk(const float*) { return false; }
+void AudioStream::WriteChunk(const float*) {}
 const char* AudioStream::GetBackendName(AudioBackend) { return ""; }
 std::optional<AudioBackend> AudioStream::ParseBackendName(const char*) { return std::nullopt; }
 
@@ -231,20 +232,20 @@ bool AudioStreamParameters::operator==(const AudioStreamParameters& o) const { r
 bool AudioStreamParameters::operator!=(const AudioStreamParameters& o) const { return false; }
 
 // ── Achievements stubs ──
-void Achievements::ConfirmSystemReset() {}
-bool Achievements::DisableHardcoreMode() { return false; }
+bool Achievements::ConfirmSystemReset() { return false; }
+void Achievements::DisableHardcoreMode() {}
 void Achievements::FrameUpdate() {}
 void Achievements::GameChanged(u32, u32) {}
 void Achievements::IdleUpdate() {}
 bool Achievements::Initialize() { return false; }
 bool Achievements::IsActive() { return false; }
 bool Achievements::IsHardcoreModeActive() { return false; }
-bool Achievements::LoadState(std::span<const u8>) { return false; }
+void Achievements::LoadState(std::span<const u8>) {}
 void Achievements::OnVMPaused(bool) {}
 void Achievements::ResetClient() {}
-void Achievements::ResetHardcoreMode(bool) {}
+bool Achievements::ResetHardcoreMode(bool) { return false; }
 void Achievements::SaveState(SaveStateBase&) {}
-void Achievements::Shutdown(bool) {}
+bool Achievements::Shutdown(bool) { return false; }
 void Achievements::UpdateSettings(const Pcsx2Config::AchievementsOptions&) {}
 
 // ── FullscreenUI stubs ──
@@ -253,8 +254,8 @@ void FullscreenUI::GameChanged(std::string, std::string, std::string, u32, u32) 
 bool FullscreenUI::HasActiveWindow() { return false; }
 void FullscreenUI::OnVMDestroyed() {}
 void FullscreenUI::OnVMStarted() {}
-void FullscreenUI::OpenAchievementsWindow() {}
-void FullscreenUI::OpenLeaderboardsWindow() {}
+bool FullscreenUI::OpenAchievementsWindow() { return false; }
+bool FullscreenUI::OpenLeaderboardsWindow() { return false; }
 void FullscreenUI::OpenPauseMenu() {}
 void FullscreenUI::Render() {}
 void FullscreenUI::ReportStateLoadError(const std::string&, std::optional<s32>, bool) {}
