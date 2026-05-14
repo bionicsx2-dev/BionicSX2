@@ -90,7 +90,8 @@ if [ ! -f "$INSTALL_DIR/lib/libzip.a" ]; then
     build_lib libzip "$SRC_DIR/libzip" \
         -DBUILD_TOOLS=OFF -DBUILD_REGRESS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOC=OFF \
         -DENABLE_COMMONCRYPTO=ON -DENABLE_GNUTLS=OFF -DENABLE_MBEDTLS=OFF -DENABLE_OPENSSL=OFF \
-        -DZLIB_ROOT="$INSTALL_DIR"
+        -DZLIB_ROOT="$INSTALL_DIR" \
+        -DHAVE_MEMCPY_S=0
 fi
 
 # freetype
