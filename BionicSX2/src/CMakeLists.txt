@@ -185,4 +185,28 @@ target_compile_options(pcsx2-core PRIVATE
     -Wno-parentheses
 )
 
-target_link_libraries(pcsx2-core PUBLIC common)
+# Add common library sources directly (pcsx2 common/CMakeLists.txt not compatible as subdirectory)
+file(GLOB_RECURSE COMMON_SOURCES ${PCSX2_ROOT}/common/*.cpp ${PCSX2_ROOT}/common/*.mm)
+# Exclude platform-specific files not for iOS
+list(REMOVE_ITEM COMMON_SOURCES
+    ${PCSX2_ROOT}/common/CocoaTools.mm
+    ${PCSX2_ROOT}/common/Windows/WinThreads.cpp
+    ${PCSX2_ROOT}/common/Windows/WinHostSys.cpp
+    ${PCSX2_ROOT}/common/Windows/WinMisc.cpp
+    ${PCSX2_ROOT}/common/Linux/LnxThreads.cpp
+    ${PCSX2_ROOT}/common/Linux/LnxMisc.cpp
+    ${PCSX2_ROOT}/common/emitter/bmi.cpp
+    ${PCSX2_ROOT}/common/emitter/fpu.cpp
+    ${PCSX2_ROOT}/common/emitter/groups.cpp
+    ${PCSX2_ROOT}/common/emitter/jmp.cpp
+    ${PCSX2_ROOT}/common/emitter/legacy.cpp
+    ${PCSX2_ROOT}/common/emitter/legacy_sse.cpp
+    ${PCSX2_ROOT}/common/emitter/movs.cpp
+    ${PCSX2_ROOT}/common/emitter/simd.cpp
+    ${PCSX2_ROOT}/common/emitter/x86emitter.cpp
+)
+target_sources(pcsx2-core PRIVATE ${COMMON_SOURCES})
+target_include_directories(pcsx2-core PUBLIC ${PCSX2_ROOT}/common)
+target_compile_options(pcsx2-core PRIVATE -fobjc-arc)
+target_link_options(pcsx2-core PRIVATE -fobjc-link-runtime)
+target_link_libraries(pcsx2-core PUBLIC "-framework Foundation")
