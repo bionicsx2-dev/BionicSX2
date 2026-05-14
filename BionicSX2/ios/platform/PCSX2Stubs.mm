@@ -149,27 +149,7 @@ InputRecordingControls& InputRecording::getControls() { static InputRecordingCon
 const InputRecordingFile& InputRecording::getData() const { static InputRecordingFile f; return f; }
 void InputRecording::InformGSThread() {}
 
-// CBreakPoints (Audit Section 2.1 — debug tools not needed)
-bool CBreakPoints::IsAddressBreakPoint(BreakPointCpu cpu, u32 addr) { return false; }
-bool CBreakPoints::IsAddressBreakPoint(BreakPointCpu cpu, u32 addr, bool* enabled) { return false; }
-bool CBreakPoints::IsTempBreakPoint(BreakPointCpu cpu, u32 addr) { return false; }
-void CBreakPoints::AddBreakPoint(BreakPointCpu cpu, u32 addr, bool temp, bool enabled, bool stepping) {}
-void CBreakPoints::RemoveBreakPoint(BreakPointCpu cpu, u32 addr) {}
-void CBreakPoints::ClearAllBreakPoints() {}
-void CBreakPoints::ClearTemporaryBreakPoints() {}
-void CBreakPoints::AddMemCheck(BreakPointCpu cpu, u32 start, u32 end, MemCheckCondition cond, MemCheckResult result) {}
-void CBreakPoints::RemoveMemCheck(BreakPointCpu cpu, u32 start, u32 end) {}
-void CBreakPoints::ClearAllMemChecks() {}
-void CBreakPoints::SetSkipFirst(BreakPointCpu cpu, u32 pc) {}
-u32 CBreakPoints::CheckSkipFirst(BreakPointCpu cpu, u32 pc) { return 0; }
-void CBreakPoints::ClearSkipFirst(BreakPointCpu cpu) {}
-void CBreakPoints::CommitClearSkipFirst(BreakPointCpu cpu) {}
-void CBreakPoints::Update(BreakPointCpu cpu, u32 addr) {}
-void CBreakPoints::SetBreakpointTriggered(bool triggered, BreakPointCpu cpu) {}
-bool CBreakPoints::GetBreakpointTriggered() { return false; }
-bool CBreakPoints::GetCorePaused() { return false; }
-void CBreakPoints::SetCorePaused(bool b) {}
-size_t CBreakPoints::GetNumBreakpoints() { return 0; }
+// CBreakPoints — now inline stubs in Breakpoints.h (iOS path)
 
 // GSDumpReplayer (Audit Section 2.4 — not needed)
 bool GSDumpReplayer::IsReplayingDump() { return false; }
