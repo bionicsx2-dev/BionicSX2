@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "Config.h"
+#include <vector>
 #include "Counters.h"
 #include "ImGui/FullscreenUI.h"
 #include "ImGui/ImGuiManager.h"
@@ -27,7 +28,9 @@
 #endif
 
 #ifdef __APPLE__
-#include "MetalRenderer.h"
+class GSDevice;
+GSDevice* MakeGSDeviceMTL();
+std::vector<GSAdapterInfo> GetMetalAdapterList();
 #endif
 
 #ifdef ENABLE_VULKAN

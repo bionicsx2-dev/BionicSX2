@@ -40,7 +40,6 @@ endif()
 
 target_include_directories(pcsx2-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/metal
     ${PCSX2_ROOT}
     ${PCSX2_ROOT}/3rdparty/include
     ${PCSX2_ROOT}/3rdparty/fmt/include
