@@ -33,7 +33,7 @@ struct ContentView: View {
             }
             .fileImporter(
                 isPresented: $showFilePicker,
-                allowedContentTypes: [.isoImage, .data],
+                allowedContentTypes: [.data],
                 allowsMultipleSelection: false
             ) { result in
                 if case .success(let urls) = result, let url = urls.first {

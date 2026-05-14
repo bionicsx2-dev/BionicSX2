@@ -4,6 +4,7 @@
 // STATUS: NEW — SwiftUI @main entry point
 
 import SwiftUI
+import AVFoundation
 
 @main
 struct BionicSX2App: App {
@@ -13,8 +14,6 @@ struct BionicSX2App: App {
         WindowGroup {
             ContentView()
                 .onAppear {
-                    // Configure AVAudioSession for low-latency audio playback
-                    // Audit Section 9.3
                     configureAudio()
                 }
         }
@@ -24,7 +23,7 @@ struct BionicSX2App: App {
         let session = AVAudioSession.sharedInstance()
         do {
             try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
-            try session.setPreferredIOBufferDuration(0.005) // 5ms latency per audit Sec 9.3
+            try session.setPreferredIOBufferDuration(0.005)
             try session.setActive(true)
         } catch {
             NSLog("[BionicSX2] Audio session config failed: \(error.localizedDescription)")

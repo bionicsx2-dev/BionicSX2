@@ -35,18 +35,9 @@ class MetalViewController: UIViewController {
         // to prevent nVif HashBucket crash
         iOSVMManager_Init()
 
-        // Pass CAMetalLayer to MetalRenderer
-        // Audit Section 4.2: CAMetalLayer reference passed to GSDeviceMTL
-        var wi = WindowInfo()
-        wi.window_handle = UnsafeMutableRawPointer(Unmanaged.passUnretained(view).toOpaque())
-        wi.surface_handle = UnsafeMutableRawPointer(Unmanaged.passUnretained(metalLayer).toOpaque())
-        wi.surface_width = UInt32(view.bounds.width * UIScreen.main.scale)
-        wi.surface_height = UInt32(view.bounds.height * UIScreen.main.scale)
-        wi.surface_scale = Float(UIScreen.main.scale)
-
-        // Initialize Metal renderer (Audit Section 4.1)
-        let renderer = GSDeviceMTL()
-        renderer.Create(wi, "", .Metal, nil)
+        // Metal renderer initialization deferred to ObjC++ layer
+        // Audit Section 4.2: CAMetalLayer + GSDeviceMTL setup done in
+        // ios/platform/CocoaTools.mm via a C-compatible bridge
 
         // Set up display link for frame pacing
         let displayLink = CADisplayLink(target: self, selector: #selector(frameStep))
