@@ -1787,7 +1787,9 @@ void InputManager::UpdateInputSourceState(SettingsInterface& si, std::unique_loc
 	}
 }
 
+#ifndef PCSX2_TARGET_IOS
 #include "Input/SDLInputSource.h"
+#endif
 
 #ifdef _WIN32
 #include "Input/DInputSource.h"
@@ -1796,7 +1798,9 @@ void InputManager::UpdateInputSourceState(SettingsInterface& si, std::unique_loc
 
 void InputManager::ReloadSources(SettingsInterface& si, std::unique_lock<std::mutex>& settings_lock)
 {
+#ifndef PCSX2_TARGET_IOS
 	UpdateInputSourceState<SDLInputSource>(si, settings_lock, InputSourceType::SDL);
+#endif
 #ifdef _WIN32
 	UpdateInputSourceState<DInputSource>(si, settings_lock, InputSourceType::DInput);
 	UpdateInputSourceState<XInputSource>(si, settings_lock, InputSourceType::XInput);
