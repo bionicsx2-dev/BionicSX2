@@ -39,9 +39,12 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES
 file(GLOB RDEBUG_SOURCES RDebug/*.cpp)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${RDEBUG_SOURCES})
 # USB/usb-eyetoy uses platform-specific webcam APIs (jpeglib, V4L2, DirectShow, AVFoundation)
+# USB/usb-pad-sdl-ff includes SDLInputSource.h (SDL3 dependency)
 # USB is fully stubbed on iOS via PCSX2Stubs.mm
 file(GLOB_RECURSE USB_EYETOY_SOURCES USB/usb-eyetoy/*.cpp USB/usb-eyetoy/*.mm)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${USB_EYETOY_SOURCES})
+file(GLOB USB_PAD_SDLFF_SOURCES USB/usb-pad/usb-pad-sdl-ff*.cpp)
+list(REMOVE_ITEM PCSX2_CORE_SOURCES ${USB_PAD_SDLFF_SOURCES})
 # DEV9 is fully stubbed on iOS via PCSX2Stubs.mm — exclude all source files
 file(GLOB_RECURSE DEV9_SOURCES DEV9/*.cpp)
 list(REMOVE_ITEM PCSX2_CORE_SOURCES ${DEV9_SOURCES})

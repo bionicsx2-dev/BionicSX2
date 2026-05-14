@@ -5,7 +5,9 @@
 #include "IconsFontAwesome.h"
 #include "IconsPromptFont.h"
 #include "USB/qemu-usb/USBinternal.h"
+#ifndef PCSX2_TARGET_IOS
 #include "USB/usb-pad/usb-pad-sdl-ff.h"
+#endif
 #include "USB/USB.h"
 #include "Host.h"
 #include "StateWrapper.h"
