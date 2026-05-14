@@ -5,6 +5,15 @@
 #import <Foundation/Foundation.h>
 #include "PrecompiledHeader.h"
 #include "common/Assertions.h"
+#include "common/CocoaTools.h"
+#include "common/Darwin/DarwinMisc.h"
+#include "Config.h"
+#include "SaveState.h"
+#include "Recording/InputRecording.h"
+#include "DebugTools/Breakpoints.h"
+#include "GSDumpReplayer.h"
+#include "GameDatabase.h"
+#include "GS/GS.h"
 
 // ── Category 1: SW Renderer JIT / x86 stubs ──
 // Audit Section 0-B: GSDrawScanlineCodeGenerator/GSSetupPrimCodeGenerator excluded on iOS
