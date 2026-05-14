@@ -25,12 +25,27 @@ add_library(pcsx2-core STATIC ${PCSX2_CORE_SOURCES})
 
 target_include_directories(pcsx2-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${PCSX2_ROOT}/common
+    ${PCSX2_ROOT}
     ${PCSX2_ROOT}/3rdparty/include
 )
 
 target_compile_features(pcsx2-core PUBLIC cxx_std_17)
 target_compile_definitions(pcsx2-core PUBLIC PCSX2_TARGET_IOS=1)
+
+# Generate svnrev.h for BuildVersion.cpp
+set(SVNREV_DIR "${CMAKE_BINARY_DIR}/common/include")
+file(MAKE_DIRECTORY "${SVNREV_DIR}")
+file(WRITE "${SVNREV_DIR}/svnrev.h"
+    "#define GIT_TAG \"v0.1.0\"\n"
+    "#define GIT_TAGGED_COMMIT 0\n"
+    "#define GIT_TAG_HI 0\n"
+    "#define GIT_TAG_MID 1\n"
+    "#define GIT_TAG_LO 0\n"
+    "#define GIT_REV \"v0.1.0-ios\"\n"
+    "#define GIT_HASH \"unknown\"\n"
+    "#define GIT_DATE \"unknown\"\n"
+)
+target_include_directories(pcsx2-core PUBLIC "${CMAKE_BINARY_DIR}")
 
 # Disable exceptions and strict aliasing (matching PCSX2 build conventions)
 target_compile_options(pcsx2-core PRIVATE
