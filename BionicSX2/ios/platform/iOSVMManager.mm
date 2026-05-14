@@ -65,10 +65,10 @@ void StopVM() {
 } // namespace iOSVMManager
 
 // C linkage wrappers for Swift access
-void iOSVMManager_Init() {
+extern "C" void iOSVMManager_Init() {
     iOSVMManager::StartVM(nullptr);
 }
 
-void iOSVMManager_Shutdown() {
+extern "C" void iOSVMManager_Shutdown() {
     iOSVMManager::StopVM();
 }
