@@ -7,8 +7,17 @@
 #include <iterator>
 #include <vector>
 
-#include "DebugInterface.h"
+#include "ExpressionParser.h"
 #include "common/Pcsx2Types.h"
+
+#ifdef PCSX2_TARGET_IOS
+class DebugInterface;
+struct BreakPointCond
+{
+	u32 Evaluate() { return 1; }
+};
+#else
+#include "DebugInterface.h"
 
 struct BreakPointCond
 {
@@ -182,6 +191,7 @@ private:
 	static std::vector<MemCheck*> cleanupMemChecks_;
 };
 
+#endif // PCSX2_TARGET_IOS
 
 // called from the dynarec
 u32 standardizeBreakpointAddress(u32 addr);

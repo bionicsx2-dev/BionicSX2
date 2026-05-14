@@ -3,15 +3,24 @@
 
 #pragma once
 
+#include "common/MemoryInterface.h"
+
+#include <string>
+
+#ifdef PCSX2_TARGET_IOS
+// Stub: debug interface not available on iOS
+class DebugInterface : public MemoryInterface {};
+class R5900DebugInterface : public DebugInterface {};
+class R3000DebugInterface : public DebugInterface {};
+class ElfMemoryReader : public MemoryInterface {};
+class MipsExpressionFunctions {};
+#else
+
 #include "BiosDebugData.h"
 #include "ExpressionParser.h"
 #include "SymbolGuardian.h"
 #include "SymbolImporter.h"
 #include "MipsStackWalk.h"
-
-#include "common/MemoryInterface.h"
-
-#include <string>
 
 enum
 {
@@ -241,3 +250,5 @@ protected:
 
 extern R5900DebugInterface r5900Debug;
 extern R3000DebugInterface r3000Debug;
+
+#endif // PCSX2_TARGET_IOS
