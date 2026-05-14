@@ -19,11 +19,11 @@ public:
     iOSAudioStream(u32 sample_rate, const AudioStreamParameters& parameters, bool stretch_enabled);
     ~iOSAudioStream() override;
 
-    bool Start(Error* error) override;
-    void Stop() override;
-    void EmptyBuffers() override;
+    bool Start(Error* error);
+    void Stop();
+    void EmptyBuffers();
     void SetPaused(bool paused) override;
-    bool SetOutputVolume(float volume) override;
+    bool SetOutputVolume(float volume);
     FramesToPlayCallback m_frames_to_play_callback = nullptr;
     void* m_frames_to_play_callback_user_data = nullptr;
 

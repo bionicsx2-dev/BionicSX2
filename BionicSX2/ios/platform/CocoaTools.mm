@@ -15,6 +15,7 @@
 // PORTED: AppKit removed, UIKit added (Audit Section 4.3)
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <AVFoundation/AVFoundation.h>
 
 // PORTED: CreateMetalLayer — NSView replaced with UIView (Audit Section 4.3)
 bool CocoaTools::CreateMetalLayer(WindowInfo* wi)

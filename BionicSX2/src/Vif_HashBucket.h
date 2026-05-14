@@ -5,6 +5,8 @@
 
 #include <array>
 #include "common/AlignedMalloc.h"
+#include "common/Assertions.h"
+#include "common/Console.h"
 
 // nVifBlock - Ordered for Hashing; the 'num' and 'upkType' fields are
 //             used as the hash bucket selector.
