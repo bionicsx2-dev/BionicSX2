@@ -6,9 +6,11 @@
 #include "common/MemoryInterface.h"
 #include "common/Pcsx2Types.h"
 
+#ifndef PCSX2_TARGET_IOS
 #include <ccc/ast.h>
 #include <ccc/symbol_database.h>
 #include <ccc/symbol_file.h>
+#endif
 
 #include <atomic>
 #include <functional>
