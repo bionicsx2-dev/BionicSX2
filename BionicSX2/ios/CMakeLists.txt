@@ -19,5 +19,5 @@ target_include_directories(ios-platform PUBLIC
     ${PCSX2_ROOT}/3rdparty/include
 )
 
-target_compile_features(ios-platform PUBLIC cxx_std_17)
+target_compile_features(ios-platform PUBLIC cxx_std_20)
 target_compile_definitions(ios-platform PUBLIC PCSX2_TARGET_IOS=1)

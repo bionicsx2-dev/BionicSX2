@@ -31,7 +31,7 @@ target_include_directories(pcsx2-core PUBLIC
     ${PCSX2_ROOT}/3rdparty/fast_float/include
 )
 
-target_compile_features(pcsx2-core PUBLIC cxx_std_17)
+target_compile_features(pcsx2-core PUBLIC cxx_std_20)
 target_compile_definitions(pcsx2-core PUBLIC PCSX2_TARGET_IOS=1)
 
 # Generate svnrev.h for BuildVersion.cpp

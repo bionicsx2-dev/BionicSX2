@@ -74,9 +74,9 @@ target_sources(BionicSX2 PRIVATE
 )
 
 # ── Compile features ──
-target_compile_features(BionicSX2 PUBLIC cxx_std_17)
+target_compile_features(BionicSX2 PUBLIC cxx_std_20)
 set_target_properties(BionicSX2 PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
     POSITION_INDEPENDENT_CODE ON
 )
