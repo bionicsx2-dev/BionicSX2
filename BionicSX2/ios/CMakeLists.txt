@@ -3,7 +3,7 @@ add_library(ios-platform STATIC
     platform/CocoaTools.mm
     platform/Filesystem_iOS.mm
     platform/Host_iOS.mm
-    platform/HostSys_iOS.cpp
+    platform/HostSys_iOS.mm
     platform/PageFaultHandler.cpp
     platform/Threading_iOS.cpp
     platform/PCSX2Stubs.mm
