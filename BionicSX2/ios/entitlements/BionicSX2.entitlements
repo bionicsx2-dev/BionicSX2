@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Future JIT integration — Audit Sec 4.4, 6.3 -->
+    <!-- Required for MAP_JIT when JIT workstream activates -->
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+
+    <!-- Audit Sec 4.4 — future use alongside JIT entitlement -->
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+
+    <!-- Audit Sec 6.3 — PS2 scratchpad requires extended memory -->
+    <key>com.apple.developer.kernel.increased-memory-limit</key>
+    <true/>
+
+    <!-- Audit Sec 6.3 — EE virtual memory map requires extended VA -->
+    <key>com.apple.developer.kernel.extended-virtual-addressing</key>
+    <true/>
+</dict>
+</plist>

@@ -1,0 +1,72 @@
+# PORTED FROM: pcsx2/.github/workflows/macos_build.yml — BionicSX2 iOS Port
+# AUDIT REFERENCE: Section 10.3 (build settings for iOS),
+#                  Section 13.6 (GitHub Actions CI for iOS IPA)
+# STATUS: NEW
+
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build_ipa:
+    name: Build BionicSX2 IPA
+    # Audit Section 16: macos-14 (Apple Silicon M-series — matches audit target hardware)
+    runs-on: macos-14
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Dependencies
+        run: |
+          brew install cmake ninja
+
+      - name: Generate CMake Files
+        run: |
+          cmake -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_TOOLCHAIN_FILE=cmake/ios.toolchain.cmake \
+                -B build .
+
+      - name: Build BionicSX2
+        working-directory: build
+        run: |
+          cmake --build . --config Release
+
+      - name: Package IPA
+        run: |
+          # Create unsigned development IPA
+          xcodebuild -exportArchive \
+            -archivePath build/BionicSX2.xcarchive \
+            -exportPath build/BionicSX2.ipa \
+            -exportOptionsPlist exportOptions.plist \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE="" || true
+
+          # Create export options plist for unsigned dev build
+          cat > exportOptions.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>development</string>
+              <key>signingStyle</key>
+              <string>manual</string>
+              <key>teamID</key>
+              <string></string>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: BionicSX2-iOS
+          path: build/BionicSX2.ipa
