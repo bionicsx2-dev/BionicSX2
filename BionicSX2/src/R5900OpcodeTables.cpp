@@ -7,12 +7,14 @@
 #include "R5900.h"
 
 // TODO(Stenzek): Move headers to common code.
+#ifndef PCSX2_TARGET_IOS
 #include "x86/iR5900AritImm.h"
 #include "x86/iR5900Arit.h"
 #include "x86/iR5900MultDiv.h"
 #include "x86/iR5900Shift.h"
 #include "x86/iR5900Branch.h"
 #include "x86/iR5900Jump.h"
+#endif
 #include "x86/iR5900LoadStore.h"
 #include "x86/iR5900Move.h"
 #include "x86/iMMI.h"

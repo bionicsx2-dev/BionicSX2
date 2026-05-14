@@ -4,6 +4,7 @@
 #pragma once
 
 #include "Common.h"
+#include "common/Threading.h"
 #include "deci2_dcmp.h"
 #include "deci2_iloadp.h"
 #include "deci2_dbgp.h"
