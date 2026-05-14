@@ -5,7 +5,7 @@
 #include "ImGui/ImGuiManager.h"
 #include "Achievements.h"
 #include "common/Threading.h"
-#include "common/SaveState.h"
+#include "SaveState.h"
 #include <span>
 
 // GSCapture
