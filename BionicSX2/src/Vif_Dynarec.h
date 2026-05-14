@@ -46,8 +46,8 @@ alignas(16) extern u32      nVifMask[3][4][4];         // [MaskNumber][CycleNumb
 // PORTED: iOS forces interpreter path to prevent nVif JIT crash
 // AUDIT REFERENCE: Section 2.3-F — nVif dynarec crashes on iOS due to
 // uninitialized HashBucket when VMManager::StartVM() is bypassed.
-#if defined(PCSX2_TARGET_IOS)
-static constexpr bool newVifDynaRec = 0;
+#if defined(__APPLE__) && defined(TARGET_OS_IOS) && TARGET_OS_IOS
+static constexpr bool newVifDynaRec = 0;  // iOS: no JIT, use interpreter
 #else
-static constexpr bool newVifDynaRec = 1; // Use code in Vif_Dynarec.inl
+static constexpr bool newVifDynaRec = 1;
 #endif

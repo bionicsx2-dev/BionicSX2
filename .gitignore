@@ -1,0 +1,5 @@
+ios-deps/
+build-ios/
+*.ipa
+*.xcarchive
+build.log

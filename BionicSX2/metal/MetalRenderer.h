@@ -124,6 +124,7 @@ public:
     bool HasSurface() const override;
     void DestroySurface() override;
     bool UpdateWindow() override;
+    void ResizeWindow(u32 new_window_width, u32 new_window_height, float new_window_scale) override;
     bool SupportsExclusiveFullscreen() const override;
     PresentResult BeginPresent(bool frame_skip) override;
     void EndPresent() override;

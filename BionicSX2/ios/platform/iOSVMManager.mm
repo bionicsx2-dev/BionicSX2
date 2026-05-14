@@ -1,39 +1,30 @@
-// PORTED FROM: VMManager.cpp — BionicSX2 iOS Port
-// AUDIT REFERENCE: Section 2.3-ADDENDUM (2.3-E, 2.3-F), Section 6.2, Section 12.2
-// STATUS: NEW — iOS-specific VM init that prevents nVif HashBucket crash
-
 #import <Foundation/Foundation.h>
-#include "Config.h"
-#include "Memory.h"
 #include "VMManager.h"
+#include "GS/GS.h"
+#include "Memory.h"
 #include "R5900.h"
 #include "Vif_Dynarec.h"
+#include "CDVD/CDVD.h"
 
-// Audit Section 2.3-E: On macOS, the init chain is:
-//   VMManager::StartVM() → SysMemory::Reset() → cpuReset() → hwReset() → vif0/1Reset() → resetNewVif(0/1)
-// iOS must replicate this in correct order or nVif HashBucket remains uninitialized,
-// causing SIGSEGV at Vif_HashBucket.h:68 on first VIF UNPACK command.
+namespace iOSVMManager {
 
-static bool s_initialized = false;
+bool StartVM(const char* isoPath) {
+    NSLog(@"[BionicSX2] iOSVMManager::StartVM starting");
 
-void iOSVMManager_Init()
-{
-    // Audit Section 2.3-F: Static init guard prevents re-entry crash loops
-    if (s_initialized) {
-        NSLog(@"[BionicSX2] iOSVMManager already initialized — skipping");
-        return;
+    // Step 1: allocate emulated memory (MUST be first)
+    if (!SysMemory::Allocate()) {
+        NSLog(@"[BionicSX2] SysMemory::Allocate() failed");
+        return false;
     }
-    s_initialized = true;
 
-    NSLog(@"[BionicSX2] iOSVMManager_Init starting");
+    // Step 2: configure emulator
+    EmuConfig.GS.Renderer = GSRendererType::Metal;
 
-    // ── Step 1: Configure EmuConfig BEFORE any reset calls ──
-    // Audit Section 2.3-F: Force interpreter path — nVif dynarec disabled at compile time
-    // via PCSX2_TARGET_IOS define in Vif_Dynarec.h. Set runtime config flags too.
-    EmuConfig.Cpu.Recompiler.EnableEE  = false;  // Audit Sec 2.1 — interpreter only, no JIT
-    EmuConfig.Cpu.Recompiler.EnableVU0 = false;  // Audit Sec 2.2 — VU interpreter paths
-    EmuConfig.Cpu.Recompiler.EnableVU1 = false;  // Audit Sec 2.2 — VU interpreter paths
-    EmuConfig.Cpu.Recompiler.EnableIOP = false;  // Audit Sec 2.3 — IOP interpreter only
+    // Belt-and-suspenders: disable all recompilers (nVif JIT, EE, VU, IOP)
+    EmuConfig.Cpu.Recompiler.EnableEE  = false;
+    EmuConfig.Cpu.Recompiler.EnableVU0 = false;
+    EmuConfig.Cpu.Recompiler.EnableVU1 = false;
+    EmuConfig.Cpu.Recompiler.EnableIOP = false;
 
     NSLog(@"[BionicSX2] Recompiler flags: EE=%d VU0=%d VU1=%d IOP=%d",
           EmuConfig.Cpu.Recompiler.EnableEE,
@@ -41,26 +32,43 @@ void iOSVMManager_Init()
           EmuConfig.Cpu.Recompiler.EnableVU1,
           EmuConfig.Cpu.Recompiler.EnableIOP);
 
-    // ── Step 2: Allocate emulated memory before CPU init ──
-    // Audit Section 2.3-E: SysMemory::Allocate() must be called BEFORE cpuReset()
-    if (!SysMemory::Allocate()) {
-        NSLog(@"[BionicSX2] CRITICAL: SysMemory::Allocate() failed");
-        return;
-    }
-    NSLog(@"[BionicSX2] SysMemory::Allocate() succeeded");
-
-    // ── Step 3: Initialize CPU and hardware ──
-    // Audit Section 2.3-E: cpuReset() calls hwReset() which calls vif0Reset/vif1Reset
-    // which calls resetNewVif(0/1). With newVifDynaRec=0, resetNewVif skips dVifReset()
-    // and only initializes buffer/bSize/idx fields safely.
+    // Step 3: reset CPU state (triggers hwReset -> vif0Reset/vif1Reset)
     cpuReset();
     NSLog(@"[BionicSX2] cpuReset() completed");
 
-    NSLog(@"[BionicSX2] iOSVMManager_Init completed successfully");
+    // Step 4: initialize GS with Metal backend
+    if (!GSopen(nullptr, "Metal", 0)) {
+        NSLog(@"[BionicSX2] GSopen failed");
+        return false;
+    }
+    NSLog(@"[BionicSX2] GSopen (Metal) succeeded");
+
+    // Step 5: load disc/ISO
+    if (isoPath) {
+        NSString* nsPath = [NSString stringWithUTF8String:isoPath];
+        NSLog(@"[BionicSX2] Loading ISO: %@", nsPath);
+        CDVDsys_SetFile(CDVD_SourceType::Iso, isoPath);
+        CDVDsys_ChangeSource(CDVD_SourceType::Iso);
+        NSLog(@"[BionicSX2] ISO loaded: %s", isoPath);
+    }
+
+    NSLog(@"[BionicSX2] iOSVMManager::StartVM completed successfully");
+    return true;
 }
 
-void iOSVMManager_Shutdown()
-{
-    NSLog(@"[BionicSX2] iOSVMManager_Shutdown");
-    s_initialized = false;
+void StopVM() {
+    NSLog(@"[BionicSX2] iOSVMManager::StopVM");
+    GSclose();
+    SysMemory::Release();
+}
+
+} // namespace iOSVMManager
+
+// C linkage wrappers for Swift access
+void iOSVMManager_Init() {
+    iOSVMManager::StartVM(nullptr);
+}
+
+void iOSVMManager_Shutdown() {
+    iOSVMManager::StopVM();
 }

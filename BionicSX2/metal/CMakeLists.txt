@@ -19,4 +19,4 @@ target_include_directories(metal-backend PUBLIC
 )
 
 target_compile_features(metal-backend PUBLIC cxx_std_20)
-target_compile_definitions(metal-backend PUBLIC PCSX2_TARGET_IOS=1)
+target_compile_definitions(metal-backend PUBLIC PCSX2_TARGET_IOS)

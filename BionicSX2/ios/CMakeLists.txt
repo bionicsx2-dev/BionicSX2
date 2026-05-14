@@ -1,17 +1,11 @@
-# BionicSX2 iOS Platform Layer
-# AUDIT REFERENCE: Section 13.3
-# Only compile files that are NOT already in common/ library.
-# Files already in common: DarwinThreads.cpp, DarwinMisc.cpp (PageFaultHandler), LnxHostSys.cpp
-# These exist on disk for reference but are excluded from this build target.
-
 add_library(ios-platform STATIC
     platform/iOSVMManager.mm
     platform/CocoaTools.mm
-    # AudioStream_iOS.mm excluded — uses upstream AudioStream API not
-    # available in BionicSX2 minimal base class. TODO: Re-implement.
-    # platform/AudioStream_iOS.mm
     platform/Filesystem_iOS.mm
     platform/Host_iOS.mm
+    platform/HostSys_iOS.cpp
+    platform/PageFaultHandler.cpp
+    platform/Threading_iOS.cpp
     platform/PCSX2Stubs.mm
 )
 
@@ -28,7 +22,6 @@ target_include_directories(ios-platform PUBLIC
 )
 
 target_compile_features(ios-platform PUBLIC cxx_std_20)
-target_compile_definitions(ios-platform PUBLIC PCSX2_TARGET_IOS=1)
+target_compile_definitions(ios-platform PUBLIC PCSX2_TARGET_IOS)
 
-# CocoaTools.mm requires ARC (unlike other MRC files)
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/platform/CocoaTools.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc")

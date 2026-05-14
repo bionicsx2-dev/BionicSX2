@@ -70,6 +70,7 @@ RenderAPI GSDeviceMTL::GetRenderAPI() const { return RenderAPI::Metal; }
 bool GSDeviceMTL::HasSurface() const { return false; }
 void GSDeviceMTL::DestroySurface() {}
 bool GSDeviceMTL::UpdateWindow() { return true; }
+void GSDeviceMTL::ResizeWindow(u32 new_window_width, u32 new_window_height, float new_window_scale) {}
 bool GSDeviceMTL::SupportsExclusiveFullscreen() const { return false; }
 GSDevice::PresentResult GSDeviceMTL::BeginPresent(bool frame_skip) { return PresentResult::OK; }
 void GSDeviceMTL::EndPresent() {}

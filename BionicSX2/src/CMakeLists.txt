@@ -68,6 +68,7 @@ list(REMOVE_ITEM PCSX2_CORE_SOURCES
 list(REMOVE_ITEM PCSX2_CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/CDVD/CDVDdiscReader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CDVD/CDVDdiscThread.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/CDVD/CsoFileReader.cpp
 )
 
 add_library(pcsx2-core STATIC ${PCSX2_CORE_SOURCES})
@@ -80,14 +81,7 @@ if(PNG_PREFIX)
   target_include_directories(pcsx2-core PUBLIC "${PNG_PREFIX}/include")
 endif()
 
-execute_process(COMMAND brew --prefix lz4
-  OUTPUT_VARIABLE LZ4_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE
-  ERROR_QUIET)
-if(LZ4_PREFIX)
-  target_include_directories(pcsx2-core PUBLIC "${LZ4_PREFIX}/include")
-else()
-  target_include_directories(pcsx2-core PUBLIC "/opt/homebrew/opt/lz4/include")
-endif()
+# lz4: available via ios-deps when built; CsoFileReader excluded below
 
 target_include_directories(pcsx2-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -112,7 +106,7 @@ target_include_directories(pcsx2-core PUBLIC
 )
 
 target_compile_features(pcsx2-core PUBLIC cxx_std_20)
-target_compile_definitions(pcsx2-core PUBLIC PCSX2_TARGET_IOS=1)
+target_compile_definitions(pcsx2-core PUBLIC PCSX2_TARGET_IOS)
 
 # Generate svnrev.h for BuildVersion.cpp
 file(WRITE "${CMAKE_BINARY_DIR}/svnrev.h"
@@ -235,10 +229,5 @@ target_include_directories(pcsx2-core PUBLIC ${PCSX2_ROOT}/common)
 target_compile_options(pcsx2-core PRIVATE -fobjc-arc)
 target_link_options(pcsx2-core PRIVATE -fobjc-link-runtime)
 target_link_libraries(pcsx2-core PUBLIC "-framework Foundation")
-# Find brew-installed lz4
-execute_process(COMMAND brew --prefix lz4
-  OUTPUT_VARIABLE LZ4_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
-if(LZ4_PREFIX)
-  target_include_directories(pcsx2-core PUBLIC "${LZ4_PREFIX}/include")
-  target_link_libraries(pcsx2-core PUBLIC "${LZ4_PREFIX}/lib/liblz4.a")
-endif()
+# lz4 not available for iOS cross-compilation (Homebrew provides macOS binary only).
+# CsoFileReader excluded above; lz4-dependent features stubbed.

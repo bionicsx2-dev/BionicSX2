@@ -6,6 +6,9 @@
 #include "MetalTexture.h"
 #include "MetalRenderer.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-method-access"
+
 GSTextureMTL::GSTextureMTL(GSDeviceMTL* dev, MRCOwned<id<MTLTexture>> texture, Type type, Format format)
     : m_dev(dev)
     , m_texture(std::move(texture))
@@ -80,3 +83,4 @@ void GSTextureMTL::SetDebugName(std::string_view name)
     }
 }
 #endif
+#pragma clang diagnostic pop

@@ -40,7 +40,7 @@ class GameControllerManager: NSObject {
             setupExtendedGamepadHandlers(extendedGamepad, controller: controller)
         }
 
-        NSLog("[BionicSX2] Controller connected: \(controller.productCategory ?? "Unknown")")
+        NSLog("[BionicSX2] Controller connected: \(controller.productCategory)")
     }
 
     @objc private func controllerDisconnected(_ notification: Notification) {
