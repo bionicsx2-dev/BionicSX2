@@ -20,8 +20,8 @@ public:
 	SymbolGuardian() = default;
 	~SymbolGuardian() = default;
 
-	void Read(std::function<void()>) const noexcept {}
-	void ReadWrite(std::function<void()>) noexcept {}
+	template<typename T> void Read(T&&) const noexcept {}
+	template<typename T> void ReadWrite(T&&) noexcept {}
 	bool FunctionExistsWithStartingAddress(u32) const { return false; }
 	bool FunctionExistsThatOverlapsAddress(u32) const { return false; }
 	void ClearIrxModules() {}

@@ -1115,6 +1115,7 @@ namespace R3000A
 			s32 version_minor = iopMemRead8(a0reg + 8);
 			DevCon.WriteLn(Color_Gray, "RegisterLibraryEntries: %8.8s version %x.%02x", modname.data(), version_major, version_minor);
 
+#ifndef PCSX2_TARGET_IOS
 			R3000SymbolGuardian.ReadWrite([&](ccc::SymbolDatabase& database) {
 				ccc::Result<ccc::SymbolSourceHandle> source = database.get_symbol_source("IRX Export Table");
 				if (!source.success())
@@ -1175,6 +1176,7 @@ namespace R3000A
 					funcptr = iopMemRead32(func);
 				}
 			});
+#endif
 		}
 
 		void ReleaseFuncs(u32 a0reg)
@@ -1185,6 +1187,7 @@ namespace R3000A
 
 			DevCon.WriteLn(Color_Gray, "ReleaseLibraryEntries: %8.8s version %x.%02x", modname.c_str(), version_major, version_minor);
 
+#ifndef PCSX2_TARGET_IOS
 			R3000SymbolGuardian.ReadWrite([&](ccc::SymbolDatabase& database) {
 				// Enumerate the module symbols that exist for this IRX module.
 				// Really there should only be one.
@@ -1205,6 +1208,7 @@ namespace R3000A
 				for (ccc::ModuleHandle module_handle : module_handles)
 					database.destroy_symbols_from_module(module_handle, true);
 			});
+#endif
 		}
 
 		int RegisterLibraryEntries_HLE()
